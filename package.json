@@ -27,6 +27,7 @@
     ]
   },
   "dependencies": {
+    "@terra-money/wallet-provider": "2.0.0",
     "next": "11.1.2",
     "next-themes": "0.0.15",
     "react": "17.0.2",
