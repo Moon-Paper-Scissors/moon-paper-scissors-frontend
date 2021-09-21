@@ -1,11 +1,34 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const defaultTheme = require('tailwindcss/defaultTheme');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const colors = require('tailwindcss/colors');
+
 module.exports = {
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: false, // or 'media' or 'class'
+  purge: [],
+  darkMode: 'class',
   theme: {
-    extend: {},
-  },
-  variants: {
-    extend: {},
+    extend: {
+      colors: {
+        green: colors.green,
+      },
+      fontFamily: {
+        sans: ['VT323', ...defaultTheme.fontFamily.sans],
+      },
+      animation: {
+        blink: '1000ms ease 0s infinite normal none running blink',
+        dance: '700ms ease 0s 2 normal none running dance',
+      },
+      keyframes: {
+        blink: {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: 0 },
+        },
+        dance: {
+          '0%, 100%': { transform: '' },
+          '50%': { transform: 'scaleX(-1)' },
+        },
+      },
+    },
   },
   plugins: [],
-}
+};
