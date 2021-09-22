@@ -1,6 +1,10 @@
 import { useWallet, WalletStatus } from '@terra-money/wallet-provider';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const Intro = () => {
+  const router = useRouter();
+
   const {
     status,
     network,
@@ -11,6 +15,12 @@ const Intro = () => {
     install,
     disconnect,
   } = useWallet();
+
+  useEffect(() => {
+    if (WalletStatus.WALLET_CONNECTED) {
+      router.push(`/dashboard/leaderboard`);
+    }
+  }, [WalletStatus]);
 
   return (
     <div className="flex flex-col items-center justify-center space-y-8">
@@ -45,7 +55,7 @@ const Intro = () => {
             ))}
           </>
         )}
-        {status === WalletStatus.WALLET_CONNECTED && (
+        {/* {status === WalletStatus.WALLET_CONNECTED && (
           <button
             type="button"
             className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
@@ -53,7 +63,7 @@ const Intro = () => {
           >
             Disconnect
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -56,8 +56,8 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <ThemeProvider enableSystem enableColorScheme attribute="class">
         <div className="flex flex-col items-center min-h-screen dark:bg-black">
-          <div className="flex flex-1 items-center justify-center mt-4">
-            <Component {...pageProps} />
+          <Component {...pageProps} />
+          {/* <div className="flex flex-1 items-center justify-center">
           </div>
           <div className="my-4">
             <p className="text-xl dark:text-white">
@@ -71,7 +71,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
                 Cole Killian
               </a>
             </p>
-          </div>
+          </div> */}
         </div>
       </ThemeProvider>
     </>

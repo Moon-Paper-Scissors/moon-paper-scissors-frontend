@@ -16,9 +16,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/public/*": [ "./public/*"]
+      "@/public/*": ["./public/*"]
     }
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "server/index.js"]
 }
