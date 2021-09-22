@@ -54,7 +54,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
         <meta property="twitter:description" content={meta.description} />
         <meta property="twitter:image" content={meta.url + meta.image} />
       </Head>
-      <ThemeProvider enableSystem enableColorScheme attribute="class">
+      <ThemeProvider enableColorScheme attribute="class">
         <div className="flex flex-col items-center min-h-screen dark:bg-black">
           <Component {...pageProps} />
           {/* <div className="flex flex-1 items-center justify-center">
