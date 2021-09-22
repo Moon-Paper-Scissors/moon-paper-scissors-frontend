@@ -1,13 +1,11 @@
-import VerticalNav from '@/components/VerticalNav';
+import { withVerticalNav } from '@/components/VerticalNav';
 
 const Leaderboard = () => (
-  <VerticalNav>
-    <div>
-      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
-        Leaderboard
-      </p>
-    </div>
-  </VerticalNav>
+  <div>
+    <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
+      Leaderboard
+    </p>
+  </div>
 );
 
-export default Leaderboard;
+export default () => withVerticalNav(Leaderboard);

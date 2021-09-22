@@ -88,6 +88,8 @@ io.on('connection', function (socket) {
 
   // Once the socket has an opponent, we can begin the game
   if (getOpponent(socket)) {
+    // this means there was another player waiting
+    // let that player start the game
     var playerInfo = {
       // player1: players[socket.id].player1,
       player1: players[socket.id].player1AccAddress,
@@ -96,9 +98,19 @@ io.on('connection', function (socket) {
     };
 
     console.log('Game Beginning!');
-    socket.emit('game.begin', playerInfo);
 
+    // send message that the opponent has been found
+    socket.emit('game.begin', playerInfo);
+    // send message that the opponent has been found
     getOpponent(socket).emit('game.begin', playerInfo);
+
+    // getOpponent(socket).on('game.created', () => {
+    //   // send message to player2 that the game has been created
+    //   socket.emit('game.created', playerInfo);
+    //   console.log('Game Beginning!');
+    // });
+
+    // socket.emit('game.begin', playerInfo);
   }
 
   // // Listens for a move to be made and emits an event to both
