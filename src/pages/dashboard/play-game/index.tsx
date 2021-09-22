@@ -23,7 +23,7 @@ type ScreenState =
   | 'Reveal Move'
   | 'Opponent Reveal';
 
-const contractAddress = ``;
+const contractAddress = `terra17ak0ku2uvfs04w4u867xhgvfg4ta6mgqfffm2u`;
 const betAmount = `5000000`;
 
 const PlayGame = () => {
@@ -73,6 +73,8 @@ const PlayGame = () => {
         ],
       });
 
+      console.log(result);
+
       setNonce(newNonce);
     }
   };
@@ -102,6 +104,8 @@ const PlayGame = () => {
           ),
         ],
       });
+
+      console.log(result);
 
       setNonce(newNonce);
     }
@@ -140,6 +144,8 @@ const PlayGame = () => {
           ),
         ],
       });
+
+      console.log(result);
     }
   };
 
@@ -147,16 +153,23 @@ const PlayGame = () => {
     if (connectedWallet) {
       const terra = new LocalTerra();
 
+      console.log(`Connecting to socket`);
       const newSocket = io(`http://localhost:8080`, {
         query: {
           accAddress: connectedWallet.walletAddress,
         },
       });
+      console.log(`Socket connected`);
 
       newSocket.on(`game.begin`, async (_newGameData) => {
         const newGameData = _newGameData as GameState;
         setGameInfo(newGameData);
         setScreenState(`Send Move`);
+      });
+
+      newSocket.on(`oponent.left`, () => {
+        setGameInfo(null);
+        setScreenState(`Finding Opponent`);
       });
 
       setSocket(newSocket);
@@ -187,12 +200,21 @@ const PlayGame = () => {
     );
   }
 
-  //   | 'Send Move'
-  //   | 'Opponent Move'
-  //   | 'Reveal Move'
-  //   | 'Opponent Reveal';
-
-  const SendMoveScreen = () => <p>Your Move</p>;
+  const SendMoveScreen = () => (
+    <div>
+      <p>Your Move</p>
+      {[`Rock`, `Paper`, `Scissors`].map((move) => (
+        <button
+          type="button"
+          className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+          key={`${move}`}
+          onClick={() => playMove(move as GameMove)}
+        >
+          {move}
+        </button>
+      ))}
+    </div>
+  );
 
   const OpponentMoveScreen = () => <p>Waiting for opponent to move</p>;
 
@@ -233,4 +255,5 @@ const PlayGame = () => {
   );
 };
 
-export default () => withVerticalNav(<PlayGame />);
+const PlayGameWithNav = () => withVerticalNav(<PlayGame />);
+export default PlayGameWithNav;

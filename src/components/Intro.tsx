@@ -17,10 +17,11 @@ const Intro = () => {
   } = useWallet();
 
   useEffect(() => {
-    if (WalletStatus.WALLET_CONNECTED) {
-      router.push(`/dashboard/leaderboard`);
+    console.log(status);
+    if (status === WalletStatus.WALLET_CONNECTED) {
+      router.push(`/dashboard/play-game`);
     }
-  }, [WalletStatus]);
+  }, [status]);
 
   return (
     <div className="flex flex-col items-center justify-center space-y-8">

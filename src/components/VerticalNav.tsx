@@ -44,6 +44,8 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => (
   </div>
 );
 
-export const withVerticalNav = (child: React.ReactNode) => (
+export default VerticalNav;
+
+export const withVerticalNav = (child: JSX.Element) => (
   <VerticalNav>{child}</VerticalNav>
 );

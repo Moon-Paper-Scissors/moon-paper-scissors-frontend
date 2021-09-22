@@ -8,4 +8,4 @@ const Leaderboard = () => (
   </div>
 );
 
-export default () => withVerticalNav(Leaderboard);
+export default () => withVerticalNav(<Leaderboard />);
