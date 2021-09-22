@@ -20,6 +20,62 @@ export function toEncodedBinary(obj: any) {
   return Buffer.from(JSON.stringify(obj)).toString(`base64`);
 }
 
+// how to do users with the local terra and wallets?
+// just don't use the station for testing initially
+//     connectedWallet
+//       .post({
+//         fee: new StdFee(1000000, '200000uusd'),
+//         msgs: [
+//           new MsgSend(connectedWallet.walletAddress, toAddress, {
+//             uusd: 1000000,
+//           }),
+//         ],
+//       })
+//       .then((nextTxResult: TxResult) => {
+//         console.log(nextTxResult);
+//         setTxResult(nextTxResult);
+//       })
+//       .catch((error: unknown) => {
+//         if (error instanceof UserDenied) {
+//           setTxError('User Denied');
+//         } else if (error instanceof CreateTxFailed) {
+//           setTxError('Create Tx Failed: ' + error.message);
+//         } else if (error instanceof TxFailed) {
+//           setTxError('Tx Failed: ' + error.message);
+//         } else if (error instanceof Timeout) {
+//           setTxError('Timeout');
+//         } else if (error instanceof TxUnspecifiedError) {
+//           setTxError('Unspecified Error: ' + error.message);
+//         } else {
+//           setTxError(
+//             'Unknown Error: ' +
+//               (error instanceof Error ? error.message : String(error)),
+//           );
+//         }
+//       });
+
+//       // send user1 transaction
+//       const sendUser1Transaction = async (message: ExecuteMsg) => {
+//         await sendTransaction(terra, connectedWallet.terraAddress, [
+//           new MsgExecuteContract(
+//             user1.key.accAddress,
+//             contractAddress,
+//             message,
+//           ),
+//         ]);
+//       };
+
+//       // send user2 transaction
+//       const sendUser2Transaction = async (message: ExecuteMsg) => {
+//         await sendTransaction(terra, user2, [
+//           new MsgExecuteContract(
+//             user2.key.accAddress,
+//             contractAddress,
+//             message,
+//           ),
+//         ]);
+//       };
+
 // /**
 //  * @notice Send a transaction. Return result if successful, throw error if failed.
 //  */

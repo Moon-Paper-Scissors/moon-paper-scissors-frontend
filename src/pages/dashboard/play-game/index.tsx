@@ -1,5 +1,5 @@
 import { withVerticalNav } from '@/components/VerticalNav';
-import { ExecuteMsg } from '@/types/execute_msg';
+import { ExecuteMsg, GameMove } from '@/types/execute_msg';
 import {
   Coin,
   LocalTerra,
@@ -16,18 +16,132 @@ interface GameState {
   player2: string;
 }
 
+type ScreenState =
+  | 'Finding Opponent'
+  | 'Send Move'
+  | 'Opponent Move'
+  | 'Reveal Move'
+  | 'Opponent Reveal';
+
 const contractAddress = ``;
 const betAmount = `5000000`;
-const nonce = `1`;
-const rock_move_hash = sha256(`Rock${nonce}`).toString();
-const paper_move_hash = sha256(`Paper${nonce}`).toString();
-const scissors_move_hash = sha256(`Scissors${nonce}`).toString();
 
 const PlayGame = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [gameInfo, setGameInfo] = useState<GameState | null>(null);
+  const [screenState, setScreenState] =
+    useState<ScreenState>(`Finding Opponent`);
+  const [gameMove, setGameMove] = useState<GameMove | null>(null);
+  const [nonce, setNonce] = useState(``);
+
+  // possible screens
+  // make a move
+  // sending move
+  // waiting for opponent to move
+  // reveal your move
+  // revealing move
+  // waiting for opponent to reveal move
+
+  // could add some more granularity via socket io
 
   const connectedWallet = useConnectedWallet();
+
+  const upsertGameWithMove = async (newGameMove: GameMove) => {
+    if (gameInfo && connectedWallet) {
+      const newNonce = (Math.random() + 1).toString(36).substring(7);
+      const moveHash = sha256(`${newGameMove}${newNonce}`).toString();
+
+      // upsert game message
+      const upsertGameWithMoveMessage: ExecuteMsg = {
+        upsert_game_with_move: {
+          player1: gameInfo.player1,
+          player2: gameInfo.player2,
+          hashed_move: moveHash,
+        },
+      };
+
+      // Send the transaction to upsert the game
+      const result = await connectedWallet.post({
+        fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+        msgs: [
+          new MsgExecuteContract(
+            connectedWallet.walletAddress,
+            contractAddress,
+            upsertGameWithMoveMessage,
+            { uluna: betAmount },
+          ),
+        ],
+      });
+
+      setNonce(newNonce);
+    }
+  };
+
+  const commitMove = async (newGameMove: GameMove) => {
+    if (gameInfo && connectedWallet) {
+      const newNonce = (Math.random() + 1).toString(36).substring(7);
+      const moveHash = sha256(`${newGameMove}${newNonce}`).toString();
+
+      // upsert game message
+      const commitMoveMessage: ExecuteMsg = {
+        commit_move: {
+          player1: gameInfo.player1,
+          player2: gameInfo.player2,
+          hashed_move: moveHash,
+        },
+      };
+
+      // Send the transaction to upsert the game
+      const result = await connectedWallet.post({
+        fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+        msgs: [
+          new MsgExecuteContract(
+            connectedWallet.walletAddress,
+            contractAddress,
+            commitMoveMessage,
+          ),
+        ],
+      });
+
+      setNonce(newNonce);
+    }
+  };
+
+  // decide whether or not to upsert a game depending on if the nonce is set
+  const playMove = async (newGameMove: GameMove) => {
+    setGameMove(newGameMove);
+    if (nonce === ``) {
+      await upsertGameWithMove(newGameMove);
+    } else {
+      await commitMove(newGameMove);
+    }
+  };
+
+  const revealMove = async () => {
+    if (gameInfo && connectedWallet && gameMove) {
+      // upsert game message
+      const revealMoveMessage: ExecuteMsg = {
+        reveal_move: {
+          player1: gameInfo.player1,
+          player2: gameInfo.player2,
+          game_move: gameMove,
+          nonce,
+        },
+      };
+
+      // Send the transaction to upsert the game
+      const result = await connectedWallet.post({
+        fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+        msgs: [
+          new MsgExecuteContract(
+            connectedWallet.walletAddress,
+            contractAddress,
+            revealMoveMessage,
+          ),
+        ],
+      });
+    }
+  };
 
   useEffect(() => {
     if (connectedWallet) {
@@ -39,87 +153,10 @@ const PlayGame = () => {
         },
       });
 
-      // how to do users with the local terra and wallets?
-      // just don't use the station for testing initially
-      //     connectedWallet
-      //       .post({
-      //         fee: new StdFee(1000000, '200000uusd'),
-      //         msgs: [
-      //           new MsgSend(connectedWallet.walletAddress, toAddress, {
-      //             uusd: 1000000,
-      //           }),
-      //         ],
-      //       })
-      //       .then((nextTxResult: TxResult) => {
-      //         console.log(nextTxResult);
-      //         setTxResult(nextTxResult);
-      //       })
-      //       .catch((error: unknown) => {
-      //         if (error instanceof UserDenied) {
-      //           setTxError('User Denied');
-      //         } else if (error instanceof CreateTxFailed) {
-      //           setTxError('Create Tx Failed: ' + error.message);
-      //         } else if (error instanceof TxFailed) {
-      //           setTxError('Tx Failed: ' + error.message);
-      //         } else if (error instanceof Timeout) {
-      //           setTxError('Timeout');
-      //         } else if (error instanceof TxUnspecifiedError) {
-      //           setTxError('Unspecified Error: ' + error.message);
-      //         } else {
-      //           setTxError(
-      //             'Unknown Error: ' +
-      //               (error instanceof Error ? error.message : String(error)),
-      //           );
-      //         }
-      //       });
-
-      //       // send user1 transaction
-      //       const sendUser1Transaction = async (message: ExecuteMsg) => {
-      //         await sendTransaction(terra, connectedWallet.terraAddress, [
-      //           new MsgExecuteContract(
-      //             user1.key.accAddress,
-      //             contractAddress,
-      //             message,
-      //           ),
-      //         ]);
-      //       };
-
-      //       // send user2 transaction
-      //       const sendUser2Transaction = async (message: ExecuteMsg) => {
-      //         await sendTransaction(terra, user2, [
-      //           new MsgExecuteContract(
-      //             user2.key.accAddress,
-      //             contractAddress,
-      //             message,
-      //           ),
-      //         ]);
-      //       };
-
       newSocket.on(`game.begin`, async (_newGameData) => {
         const newGameData = _newGameData as GameState;
         setGameInfo(newGameData);
-
-        // upsert game message
-        const upsertGameWithMoveMessage: ExecuteMsg = {
-          upsert_game_with_move: {
-            player1: newGameData.player1,
-            player2: newGameData.player2,
-            hashed_move: rock_move_hash,
-          },
-        };
-
-        // Send the transaction to start the game
-        const result = await connectedWallet.post({
-          fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
-          msgs: [
-            new MsgExecuteContract(
-              connectedWallet.walletAddress,
-              contractAddress,
-              upsertGameWithMoveMessage,
-              { uluna: betAmount },
-            ),
-          ],
-        });
+        setScreenState(`Send Move`);
       });
 
       setSocket(newSocket);
@@ -142,7 +179,7 @@ const PlayGame = () => {
     );
   }
 
-  if (!gameInfo) {
+  if (!gameInfo || screenState === `Finding Opponent`) {
     return (
       <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
         Finding an opponent...
@@ -150,17 +187,48 @@ const PlayGame = () => {
     );
   }
 
+  //   | 'Send Move'
+  //   | 'Opponent Move'
+  //   | 'Reveal Move'
+  //   | 'Opponent Reveal';
+
+  const SendMoveScreen = () => <p>Your Move</p>;
+
+  const OpponentMoveScreen = () => <p>Waiting for opponent to move</p>;
+
+  const RevealMoveScreen = () => <p>Time to reveal your move</p>;
+
+  const OpponentRevealScreen = () => <p>Waiting for opponent to reveal move</p>;
+
   return (
     <div>
-      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
-        Playing Game
-      </p>
-      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
-        Player 1: {gameInfo.player1}
-      </p>
-      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
-        Player 2: {gameInfo.player2}
-      </p>
+      <div>
+        <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
+          Playing Game
+        </p>
+        <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
+          Player 1: {gameInfo.player1}
+        </p>
+        <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
+          Player 2: {gameInfo.player2}
+        </p>
+      </div>
+      <div>
+        {(() => {
+          switch (screenState) {
+            case `Send Move`:
+              return <SendMoveScreen />;
+            case `Opponent Move`:
+              return <OpponentMoveScreen />;
+            case `Reveal Move`:
+              return <RevealMoveScreen />;
+            case `Opponent Reveal`:
+              return <OpponentRevealScreen />;
+            default:
+              return <div />;
+          }
+        })()}
+      </div>
     </div>
   );
 };
