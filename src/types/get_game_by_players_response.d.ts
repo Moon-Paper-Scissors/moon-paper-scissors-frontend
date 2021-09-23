@@ -39,8 +39,8 @@ export type PlayerMove =
 export type GameMove = 'Rock' | 'Paper' | 'Scissors';
 export type GameResult = 'Player1Wins' | 'Player2Wins' | 'Tie';
 
-export interface GetGameResponse {
-  game: GameState;
+export interface GetGameByPlayersResponse {
+  game?: GameState | null;
   [k: string]: unknown;
 }
 export interface GameState {

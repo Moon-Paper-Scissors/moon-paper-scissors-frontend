@@ -7,26 +7,15 @@
 
 export type QueryMsg =
   | {
-      get_game: {
+      get_game_by_player: {
+        player: string;
+        [k: string]: unknown;
+      };
+    }
+  | {
+      get_game_by_players: {
         player1: string;
         player2: string;
-        [k: string]: unknown;
-      };
-    }
-  | {
-      get_games: {
-        [k: string]: unknown;
-      };
-    }
-  | {
-      get_games_by_host: {
-        host: string;
-        [k: string]: unknown;
-      };
-    }
-  | {
-      get_games_by_opponent: {
-        opponent: string;
         [k: string]: unknown;
       };
     }

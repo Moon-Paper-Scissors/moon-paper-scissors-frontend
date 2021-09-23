@@ -7,14 +7,7 @@
 
 export type ExecuteMsg =
   | {
-      start_game: {
-        player2: string;
-        [k: string]: unknown;
-      };
-    }
-  | {
       join_game: {
-        player1: string;
         [k: string]: unknown;
       };
     }
