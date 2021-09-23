@@ -7,8 +7,10 @@ import {
 import { ThemeProvider } from 'next-themes';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import Image from 'next/image';
 import { FC } from 'react';
 import 'tailwindcss/tailwind.css';
+import MoonPixelArt from '../../public/images/moon-pixel-art.png';
 
 const mainnet = {
   name: `mainnet`,
@@ -55,8 +57,20 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
         <meta property="twitter:image" content={meta.url + meta.image} />
       </Head>
       <ThemeProvider enableColorScheme attribute="class">
-        <div className="flex flex-col items-center min-h-screen dark:bg-black">
-          <Component {...pageProps} />
+        <div className="dark">
+          <div className="flex flex-col items-center justify-center min-h-screen dark:bg-black">
+            <div
+              style={{
+                position: `absolute`,
+                top: 0,
+                right: 0,
+                transform: `translate(50%, -40%)`,
+              }}
+            >
+              <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
+            </div>
+            <Component {...pageProps} />
+          </div>
           {/* <div className="flex flex-1 items-center justify-center">
           </div>
           <div className="my-4">

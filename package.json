@@ -27,6 +27,8 @@
     ]
   },
   "dependencies": {
+    "@dicebear/avatars": "4.9.1",
+    "@dicebear/avatars-identicon-sprites": "4.9.1",
     "@terra-dev/wallet-types": "2.0.0",
     "@terra-money/terra.js": "2.0.8",
     "@terra-money/wallet-provider": "2.0.0",
