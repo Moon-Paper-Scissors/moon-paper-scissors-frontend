@@ -14,6 +14,48 @@ import { useConnectedWallet } from '@terra-money/wallet-provider';
 import sha256 from 'crypto-js/sha256';
 import { useEffect, useMemo, useState } from 'react';
 
+const getGameStatus = (game: GameState, walletAddress: string) => {
+  let newGameStatus;
+
+  // for now assume you are player 1
+  if (game.player1 === walletAddress) {
+    if (!game.player1_move) {
+      // player 1 hasn't moved yet, so move
+      newGameStatus = `Your Move`;
+    } else if (!game.player2_move) {
+      // player 2 hasn't moved yet, so wait
+      newGameStatus = `Waiting for opponent to move`;
+    } else if (Object.keys(game.player1_move)[0] === `HashedMove`) {
+      // player 1 hasn't revealed yet, so reveal
+      newGameStatus = `Your Turn to Reveal`;
+    } else if (Object.keys(game.player2_move)[0] === `HashedMove`) {
+      // player 2 hasn't revealed yet, so wait
+      newGameStatus = `Waiting for opponent to reveal`;
+    } else {
+      newGameStatus = `Unexpected behavior`;
+    }
+  } else if (game.player2 === walletAddress) {
+    if (!game.player2_move) {
+      // player 1 hasn't moved yet, so move
+      newGameStatus = `Your Move`;
+    } else if (!game.player1_move) {
+      // player 2 hasn't moved yet, so wait
+      newGameStatus = `Waiting for opponent to move`;
+    } else if (Object.keys(game.player2_move)[0] === `HashedMove`) {
+      // player 1 hasn't revealed yet, so reveal
+      newGameStatus = `Your Turn to Reveal`;
+    } else if (Object.keys(game.player1_move)[0] === `HashedMove`) {
+      // player 2 hasn't revealed yet, so wait
+      newGameStatus = `Waiting for opponent to reveal`;
+    } else {
+      newGameStatus = `Unexpected behavior`;
+    }
+  } else {
+    newGameStatus = `Unexpected behavior`;
+  }
+
+  return newGameStatus;
+};
 interface GameInfo {
   player1: string;
   player2: string;
@@ -21,7 +63,7 @@ interface GameInfo {
 
 type ScreenState = 'Init' | 'Finding Opponent' | 'In Game';
 
-const contractAddress = `terra1dp972qfjp362m7slfjsvzg6w72ky5reuskhuxv`;
+const contractAddress = `terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5`;
 // const betAmount = `5000000`;
 
 const PlayGame = () => {
@@ -34,7 +76,11 @@ const PlayGame = () => {
   // after finding an opponent
   const [gameState, setGameState] = useState<GameState | null>(null);
   const gameStatus = useMemo(
-    () => (gameState ? getGameStatus(gameState) : null),
+    () =>
+      gameState && connectedWallet
+        ? getGameStatus(gameState, connectedWallet.walletAddress)
+        : null,
+
     [gameState],
   );
   // when playing
@@ -110,6 +156,7 @@ const PlayGame = () => {
       console.log(`COMMIT TRANSACTION RESULT`);
       debugTransaction(result);
 
+      setGameMove(newGameMove);
       setNonce(newNonce);
     }
   };
@@ -142,51 +189,8 @@ const PlayGame = () => {
     }
   };
 
-  const getGameStatus = (game: GameState) => {
-    let newGameStatus;
-
-    // for now assume you are player 1
-    if (game.player1 === connectedWallet?.walletAddress) {
-      if (!game.player1_move) {
-        // player 1 hasn't moved yet, so move
-        newGameStatus = `Your Move`;
-      } else if (!game.player2_move) {
-        // player 2 hasn't moved yet, so wait
-        newGameStatus = `Waiting for opponent to move`;
-      } else if (Object.keys(game.player1_move)[0] === `HashedMove`) {
-        // player 1 hasn't revealed yet, so reveal
-        newGameStatus = `Your Turn to Reveal`;
-      } else if (Object.keys(game.player2_move)[0] === `HashedMove`) {
-        // player 2 hasn't revealed yet, so wait
-        newGameStatus = `Waiting for opponent to reveal`;
-      } else {
-        newGameStatus = `Unexpected behavior`;
-      }
-    } else if (game.player2 === connectedWallet?.walletAddress) {
-      if (!game.player2_move) {
-        // player 1 hasn't moved yet, so move
-        newGameStatus = `Your Move`;
-      } else if (!game.player1_move) {
-        // player 2 hasn't moved yet, so wait
-        newGameStatus = `Waiting for opponent to move`;
-      } else if (Object.keys(game.player2_move)[0] === `HashedMove`) {
-        // player 1 hasn't revealed yet, so reveal
-        newGameStatus = `Your Turn to Reveal`;
-      } else if (Object.keys(game.player1_move)[0] === `HashedMove`) {
-        // player 2 hasn't revealed yet, so wait
-        newGameStatus = `Waiting for opponent to reveal`;
-      } else {
-        newGameStatus = `Unexpected behavior`;
-      }
-    } else {
-      newGameStatus = `Unexpected behavior`;
-    }
-
-    return newGameStatus;
-  };
-
   const updateGameState = async () => {
-    if (gameState && connectedWallet) {
+    if (connectedWallet) {
       // console.log('INIT LOCAL TERRA');
       // get terra
 
@@ -206,6 +210,7 @@ const PlayGame = () => {
 
       if (res.game) {
         // player in game
+        setScreenState(`In Game`);
         setGameState(res.game);
       } else if (res.waiting_for_opponent) {
         // waiting for opponent
@@ -214,6 +219,8 @@ const PlayGame = () => {
         // player hasn't entered a game yet
         setScreenState(`Init`);
       }
+    } else {
+      console.log(`Wallet not connected!`);
     }
   };
 
@@ -307,7 +314,10 @@ const PlayGame = () => {
       </div>
       <>
         <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
-          Bet Amount: {`${gameState.bet_amount} uluna`}
+          Bet Amount:{` `}
+          {gameState.bet_amount
+            .map((coin) => `${coin.amount} ${coin.denom},`)
+            .join(``)}
         </p>
         <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
           Player 1 Wins: {gameState ? gameState.player1_hands_won : `0`}
