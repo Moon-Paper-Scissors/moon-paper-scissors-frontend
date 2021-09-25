@@ -81,6 +81,7 @@ type GameStatus =
 interface PlayGame {
   player1_move: GameMove;
   player2_move: GameMove;
+  game_over: boolean;
   // hand_won: string;
 }
 
@@ -280,12 +281,15 @@ const PlayGame = () => {
         setPlayGame({
           player1_move: res.player1_game_move as GameMove,
           player2_move: res.player2_game_move as GameMove,
+          game_over: false,
         });
       } else if (res.game_won) {
         setPlayGame({
           player1_move: res.player1_game_move as GameMove,
           player2_move: res.player2_game_move as GameMove,
+          game_over: true,
         });
+
         // game was won
         // run the relevant animation
       }
@@ -340,7 +344,7 @@ const PlayGame = () => {
         Play with a stranger (best out of 5)
       </p>
 
-      <div className="flex items-center justify-between mt-10">
+      <div className="max-w-3xl flex items-center justify-between mt-10">
         {[`100000`, `1000000`, `5000000`].map((betAmount) => (
           <button
             type="button"
@@ -384,15 +388,19 @@ const PlayGame = () => {
 
   const GameScreen = () => {
     const [showResult, setShowResult] = useState(false);
+    const [gameOver, setGameOver] = useState(false);
 
     useEffect(() => {
-      console.log(playGame);
       const resultTimeout = setTimeout(() => {
         setShowResult(true);
       }, 1500);
 
       const returnTimeout = setTimeout(() => {
-        setPlayGame(null);
+        if (playGame?.game_over) {
+          setGameOver(true);
+        } else {
+          setPlayGame(null);
+        }
       }, 3000);
 
       return () => {
@@ -465,16 +473,55 @@ const PlayGame = () => {
       </span>
     );
 
-    // const style = useSpring({
-    //   display: 'inline-block',
-    //   backfaceVisibility: 'hidden',
-    //   transform: isBooped ? `rotate(${rotation}deg)` : `rotate(0deg)`,
-    // });
+    const getWinner = (player1_move: GameMove, player2_move: GameMove) => {
+      switch (`${player1_move},${player2_move}`) {
+        case `Rock,Paper`:
+        case `Paper,Scissors`:
+        case `Scissors,Rock`:
+          return `player2`;
+        case `Paper,Rock`:
+        case `Scissors,Paper`:
+        case `Rock,Scissors`:
+          return `player1`;
+        default:
+          return `tie`;
+      }
+    };
 
-    const getWinner = () => `Player 1`;
+    const getMessage = () => {
+      if (playGame && gameState && connectedWallet) {
+        const winner = getWinner(playGame.player1_move, playGame.player2_move);
+        if (getPlayerNumber(gameState, connectedWallet) === winner) {
+          return `You Won!`;
+        }
+        if (getOpponentNumber(gameState, connectedWallet) === winner) {
+          return `You Lost...`;
+        }
+        return `Tie`;
+      }
+      return `No Game`;
+    };
 
     if (playGame === null) {
       return <p>Error</p>;
+    }
+
+    if (gameOver) {
+      return (
+        <>
+          <p className="text-6xl text-center dark:text-white mb-10">
+            {`${getMessage()}`}
+          </p>
+
+          <button
+            type="button"
+            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+            onClick={() => setScreenState(`Init`)}
+          >
+            Play Again
+          </button>
+        </>
+      );
     }
 
     return (
@@ -485,7 +532,7 @@ const PlayGame = () => {
               className="text-6xl text-center dark:text-white mb-10"
               style={{ visibility: `hidden` }}
             >
-              {`${getWinner()} Wins!`}
+              {`${getMessage()}`}
             </p>
             <div style={{ display: `flex`, justifyContent: `space-between` }}>
               <UpAndDownSpan>
@@ -499,7 +546,7 @@ const PlayGame = () => {
         ) : (
           <>
             <p className="text-6xl text-center dark:text-white mb-10">
-              {`${getWinner()} Wins!`}
+              {`${getMessage()}`}
             </p>
             <div style={{ display: `flex`, justifyContent: `space-between` }}>
               <LeftMove gameMove={playGame.player1_move} />
@@ -628,6 +675,8 @@ const PlayGame = () => {
       )}
     </div>
   );
+
+  const GameOverScreen = () => <p>Game Over</p>;
 
   return (
     <div className="mt-20">
