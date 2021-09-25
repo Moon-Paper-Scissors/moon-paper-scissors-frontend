@@ -5,6 +5,7 @@ import { GetGameByPlayerResponse } from '@/types/get_game_by_player_response';
 import { QueryMsg } from '@/types/query_msg';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { debugTransaction } from '@/utils/txnHelpers';
+import { WebSocketClient } from '@/utils/webSocketClient';
 import {
   Coin,
   LCDClient,
@@ -16,7 +17,14 @@ import {
   useConnectedWallet,
 } from '@terra-money/wallet-provider';
 import sha256 from 'crypto-js/sha256';
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
+import PaperPixelArt from '../../../../public/images/paper.png';
+import RockPixelArt from '../../../../public/images/rock.png';
+import ScissorsPixelArt from '../../../../public/images/scissors.png';
+
+const contractAddress = `terra1tndcaqxkpc5ce9qee5ggqf430mr2z3pefe5wj6`;
 
 const getGameStatus = (game: GameState, walletAddress: string) => {
   let newGameStatus;
@@ -70,7 +78,12 @@ type GameStatus =
   | 'Waiting for opponent to reveal'
   | 'Unexpected behavior';
 
-const contractAddress = `terra10pyejy66429refv3g35g2t7am0was7ya7kz2a4`;
+interface PlayGame {
+  player1_move: GameMove;
+  player2_move: GameMove;
+  // hand_won: string;
+}
+
 // const betAmount = `5000000`;
 
 const PlayGame = () => {
@@ -93,6 +106,12 @@ const PlayGame = () => {
   // when playing
   const [gameMove, setGameMove] = useState<GameMove | null>(null);
   const [nonce, setNonce] = useState(``);
+  const [playGame, setPlayGame] = useState<PlayGame | null>(null);
+  // const [playGame, setPlayGame] = useState<PlayGame | null>({
+  //   player1_move: 'Rock' as GameMove,
+  //   player2_move: 'Paper' as GameMove,
+  //   // hand_won: 'player1',
+  // });
 
   const terra = new LCDClient({
     URL: `http://localhost:1317`,
@@ -236,14 +255,80 @@ const PlayGame = () => {
     }
   };
 
+  const handleResponse = (res: any) => {
+    if (res.action === `join_game`) {
+      // join_game message
+      if (res.opponent_found === `false`) {
+        // waiting for opponent
+        setScreenState(`Finding Opponent`);
+      } else if (res.opponent_found === `true`) {
+        // found opponent
+        setScreenState(`In Game`);
+        setGameState(JSON.parse(res.game_state));
+      } else {
+        console.error(`Invalid opponent_found value`);
+      }
+    } else if (res.action === `commit_move`) {
+      setGameState(JSON.parse(res.game_state));
+    } else if (res.action === `reveal_move`) {
+      const tmpGameState = JSON.parse(res.game_state) as GameState;
+      setGameState(tmpGameState);
+
+      if (res.hand_won) {
+        // a hand was won
+        // run the relevant animation
+        setPlayGame({
+          player1_move: res.player1_game_move as GameMove,
+          player2_move: res.player2_game_move as GameMove,
+        });
+      } else if (res.game_won) {
+        setPlayGame({
+          player1_move: res.player1_game_move as GameMove,
+          player2_move: res.player2_game_move as GameMove,
+        });
+        // game was won
+        // run the relevant animation
+      }
+    }
+  };
+
   useEffect(() => {
-    // continously fetch the game state
-    const interval = setInterval(() => {
-      updateGameState();
-    }, 1000);
+    // initial game state update for when you refresh the page
+    console.log(playGame);
+    updateGameState();
+
+    const wsclient = new WebSocketClient(`ws://localhost:26657/websocket`);
+
+    if (connectedWallet) {
+      console.log(`Setting up subscription!`);
+      // send tracker
+
+      wsclient.on(`open`, () => {
+        console.log(`CONNECTION OPENED!`);
+      });
+      wsclient.subscribe(
+        `Tx`,
+        {
+          'execute_contract.contract_address': contractAddress,
+          'wasm.players': [`CONTAINS`, connectedWallet.walletAddress],
+        },
+        (data) => {
+          const res = data.value.TxResult.result.events
+            .find((event: any) => event.type === `wasm`)
+            .attributes.reduce((acc: any, attr: any) => {
+              acc[atob(attr.key)] = atob(attr.value);
+              return acc;
+            }, {});
+          console.log(`Event received!`);
+          console.log(res);
+          handleResponse(res);
+        },
+      );
+    }
 
     return () => {
-      clearInterval(interval);
+      wsclient.destroy();
+      // clearInterval(interval);
     };
   }, [connectedWallet]);
 
@@ -297,9 +382,138 @@ const PlayGame = () => {
     );
   };
 
+  const GameScreen = () => {
+    const [showResult, setShowResult] = useState(false);
+
+    useEffect(() => {
+      console.log(playGame);
+      const resultTimeout = setTimeout(() => {
+        setShowResult(true);
+      }, 1500);
+
+      const returnTimeout = setTimeout(() => {
+        setPlayGame(null);
+      }, 3000);
+
+      return () => {
+        clearTimeout(resultTimeout);
+        clearTimeout(returnTimeout);
+      };
+    }, []);
+
+    const upAndDown = keyframes`
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-80px); }
+    0% { transform: translateY(0px); }
+    `;
+
+    const UpAndDownSpan = styled.span`
+       {
+        animation: ${upAndDown} 0.5s linear 3;
+      }
+    `;
+
+    const LeftMove = ({
+      gameMove: displayGameMove,
+    }: {
+      gameMove: GameMove;
+    }) => (
+      <span
+        style={{
+          display: `inline-block`,
+          transform: `rotate(90deg) scaleX(-1) scale(0.7)`,
+        }}
+      >
+        <Image
+          src={(() => {
+            if (displayGameMove === `Rock`) {
+              return RockPixelArt;
+            }
+            if (displayGameMove === `Paper`) {
+              return PaperPixelArt;
+            }
+            return ScissorsPixelArt;
+          })()}
+          alt={displayGameMove}
+        />
+      </span>
+    );
+
+    const RightMove = ({
+      gameMove: displayGameMove,
+    }: {
+      gameMove: GameMove;
+    }) => (
+      <span
+        style={{
+          display: `inline-block`,
+          transform: `rotate(-90deg) scale(0.7)`,
+        }}
+      >
+        <Image
+          src={(() => {
+            if (displayGameMove === `Rock`) {
+              return RockPixelArt;
+            }
+            if (displayGameMove === `Paper`) {
+              return PaperPixelArt;
+            }
+            return ScissorsPixelArt;
+          })()}
+          alt={displayGameMove}
+        />
+      </span>
+    );
+
+    // const style = useSpring({
+    //   display: 'inline-block',
+    //   backfaceVisibility: 'hidden',
+    //   transform: isBooped ? `rotate(${rotation}deg)` : `rotate(0deg)`,
+    // });
+
+    const getWinner = () => `Player 1`;
+
+    if (playGame === null) {
+      return <p>Error</p>;
+    }
+
+    return (
+      <>
+        {!showResult ? (
+          <>
+            <p
+              className="text-6xl text-center dark:text-white mb-10"
+              style={{ visibility: `hidden` }}
+            >
+              {`${getWinner()} Wins!`}
+            </p>
+            <div style={{ display: `flex`, justifyContent: `space-between` }}>
+              <UpAndDownSpan>
+                <LeftMove gameMove={`Rock` as GameMove} />
+              </UpAndDownSpan>
+              <UpAndDownSpan>
+                <RightMove gameMove={`Rock` as GameMove} />
+              </UpAndDownSpan>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-6xl text-center dark:text-white mb-10">
+              {`${getWinner()} Wins!`}
+            </p>
+            <div style={{ display: `flex`, justifyContent: `space-between` }}>
+              <LeftMove gameMove={playGame.player1_move} />
+              <RightMove gameMove={playGame.player2_move} />
+            </div>
+          </>
+        )}
+      </>
+    );
+  };
+
   const PlayingScreen = () => (
     <div>
-      {gameState && connectedWallet && (
+      {gameState && connectedWallet && playGame === null ? (
         <>
           <div>
             <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
@@ -354,16 +568,19 @@ const PlayGame = () => {
                     <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
                       Your Move
                     </p>
-                    {[`Rock`, `Paper`, `Scissors`].map((move) => (
-                      <button
-                        type="button"
-                        className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-                        key={`${move}`}
-                        onClick={() => commitMove(move as GameMove)}
-                      >
-                        {move}
-                      </button>
-                    ))}
+
+                    <div className="max-w-2xl flex items-center justify-between mt-10">
+                      {[`Rock`, `Paper`, `Scissors`].map((move) => (
+                        <button
+                          type="button"
+                          className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                          key={`${move}`}
+                          onClick={() => commitMove(move as GameMove)}
+                        >
+                          {move}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 );
               }
@@ -383,7 +600,7 @@ const PlayGame = () => {
 
                     <button
                       type="button"
-                      className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                      className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
                       onClick={() => revealMove()}
                     >
                       Reveal Move
@@ -406,16 +623,17 @@ const PlayGame = () => {
             })()}
           </div>
         </>
+      ) : (
+        <GameScreen />
       )}
     </div>
   );
 
   return (
-    <div className="max-w-3xl mt-20">
+    <div className="mt-20">
       <p className="text-6xl dark:text-white mb-10">
         {screenState === `In Game` ? `Playing Game` : `Play Game`}
       </p>
-      {/* {screenState === 'Init' ? <InitScreen /> : <FindingOpponentScreen />} */}
       {(() => {
         if (screenState === `Init`) {
           return <InitScreen />;
