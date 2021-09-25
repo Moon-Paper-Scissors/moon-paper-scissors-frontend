@@ -341,7 +341,7 @@ const PlayGame = () => {
     //   <p className="text-6xl dark:text-white">Play Game</p>
     <>
       <p className="text-3xl dark:text-white mt-20">
-        Play with a stranger (best out of 5)
+        Play with a stranger (best out of 3)
       </p>
 
       <div className="max-w-3xl flex items-center justify-between mt-10">
@@ -675,8 +675,6 @@ const PlayGame = () => {
       )}
     </div>
   );
-
-  const GameOverScreen = () => <p>Game Over</p>;
 
   return (
     <div className="mt-20">

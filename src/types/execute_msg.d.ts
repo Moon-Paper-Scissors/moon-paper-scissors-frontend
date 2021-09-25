@@ -12,14 +12,6 @@ export type ExecuteMsg =
       };
     }
   | {
-      upsert_game_with_move: {
-        hashed_move: string;
-        player1: string;
-        player2: string;
-        [k: string]: unknown;
-      };
-    }
-  | {
       commit_move: {
         hashed_move: string;
         player1: string;

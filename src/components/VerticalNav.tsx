@@ -1,8 +1,9 @@
 import { formatAddressShort } from '@/utils/addressHelpers';
+import { LCDClient } from '@terra-money/terra.js';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 const NavItem = ({ link, text }: { link: string; text: string }) => {
   const router = useRouter();
@@ -24,7 +25,30 @@ const NavItem = ({ link, text }: { link: string; text: string }) => {
 };
 
 const VerticalNav: FC<React.ReactNode> = ({ children }) => {
+  const [balance, setBalance] = useState(``);
   const connectedWallet = useConnectedWallet();
+
+  const terra = new LCDClient({
+    URL: `http://localhost:1317`,
+    chainID: `localterra`,
+  });
+
+  useEffect(() => {
+    if (connectedWallet) {
+      (async () => {
+        const tmpBalance = (
+          await terra.bank.balance(connectedWallet.walletAddress)
+        )
+          .get(`uluna`)
+          ?.amount.toString();
+        if (tmpBalance) {
+          setBalance(`${+tmpBalance / 1_000_000} luna`);
+        } else {
+          setBalance(`${0} luna`);
+        }
+      })();
+    }
+  }, [connectedWallet]);
 
   return (
     <div className="flex" style={{ width: `100vw` }}>
@@ -47,9 +71,14 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
                 src={`https://avatars.dicebear.com/api/identicon/${connectedWallet.walletAddress}.svg`}
               />
 
-              <p className="max-w-xs md:max-w-prose text-2xl md:text-2xl text-center dark:text-white">
-                {formatAddressShort(connectedWallet.walletAddress)}
-              </p>
+              <div>
+                <p className="max-w-xs md:max-w-prose text-2xl md:text-2xl dark:text-white">
+                  {formatAddressShort(connectedWallet.walletAddress)}
+                </p>
+                <p className="max-w-xs md:max-w-prose text-xl dark:text-white">
+                  {balance}
+                </p>
+              </div>
             </>
           )}
         </div>

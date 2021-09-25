@@ -20,6 +20,11 @@ export type QueryMsg =
       };
     }
   | {
+      get_leaderboard: {
+        [k: string]: unknown;
+      };
+    }
+  | {
       admin: {
         [k: string]: unknown;
       };
