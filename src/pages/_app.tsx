@@ -58,7 +58,8 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <ThemeProvider enableColorScheme attribute="class">
         <div className="dark">
-          <div className="flex flex-col items-center justify-center min-h-screen dark:bg-black">
+          <div className="min-h-screen dark:bg-black">
+            {/* flex flex-col items-center justify-center  */}
             <div
               style={{
                 position: `fixed`,
@@ -69,7 +70,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
             >
               <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
             </div>
-            <div style={{ zIndex: 10 }}>
+            <div style={{ zIndex: 10, width: `100vw` }}>
               <Component {...pageProps} />
             </div>
           </div>

@@ -61,7 +61,8 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   }, [connectedWallet]);
 
   return (
-    <div className="flex" style={{ width: `100vw`, height: `100vh` }}>
+    // <div className="flex" style={{ width: `100vw` }}>
+    <>
       <div
         style={{
           height: `100vh`,
@@ -117,10 +118,18 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
           </p>
         </div>
       </div>
-      <div style={{ padding: `50px`, width: `100%`, marginLeft: `300px` }}>
+      <div
+        style={{
+          padding: `50px`,
+          // width: `100%`,
+          marginLeft: `300px`,
+          // height: '100vh',
+        }}
+      >
         {children}
       </div>
-    </div>
+      {/* </div> */}
+    </>
   );
 };
 
