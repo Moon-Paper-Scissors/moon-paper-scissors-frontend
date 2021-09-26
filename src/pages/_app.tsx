@@ -61,7 +61,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
           <div className="flex flex-col items-center justify-center min-h-screen dark:bg-black">
             <div
               style={{
-                position: `absolute`,
+                position: `fixed`,
                 top: 0,
                 right: 0,
                 transform: `translate(50%, -40%)`,
@@ -69,7 +69,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
             >
               <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
             </div>
-            <Component {...pageProps} />
+            <div style={{ zIndex: 10 }}>
+              <Component {...pageProps} />
+            </div>
           </div>
           {/* <div className="flex flex-1 items-center justify-center">
           </div>

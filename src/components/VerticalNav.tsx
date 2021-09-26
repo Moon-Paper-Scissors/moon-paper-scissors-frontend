@@ -65,8 +65,9 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
       <div
         style={{
           height: `100vh`,
-          width: `400px`,
+          width: `300px`,
           borderRight: `solid white 2px`,
+          position: `fixed`,
         }}
         className="p-8 justify-center"
       >
@@ -95,11 +96,14 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
         <div className="mt-10">
           <NavItem link="/dashboard/play-game" text="Play Game" />
           <NavItem link="/dashboard/leaderboard" text="Leaderboard" />
-          <NavItem link="/dashboard/profile" text="Your Profile" />
+          <NavItem link="/dashboard/faq" text="FAQ" />
+          {/* <NavItem link="/dashboard/profile" text="Your Profile" /> */}
           <NavItem link="/dashboard/disconnect" text="Disconnect" />
         </div>
       </div>
-      <div style={{ padding: `50px`, width: `100%` }}>{children}</div>
+      <div style={{ padding: `50px`, width: `100%`, marginLeft: `300px` }}>
+        {children}
+      </div>
     </div>
   );
 };
