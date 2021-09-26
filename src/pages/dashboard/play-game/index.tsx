@@ -1,5 +1,9 @@
 import { withVerticalNav } from '@/components/VerticalNav';
-import { RPSContractAddress } from '@/constants';
+import {
+  LCDCClientConfig,
+  RPSContractAddress,
+  WebsocketAddress,
+} from '@/constants';
 import { ExecuteMsg, GameMove } from '@/types/execute_msg';
 import { GameState } from '@/types/game_state';
 import { GetGameByPlayerResponse } from '@/types/get_game_by_player_response';
@@ -133,10 +137,7 @@ const PlayGame = () => {
   //   game_over: false,
   // });
 
-  const terra = new LCDClient({
-    URL: `http://localhost:1317`,
-    chainID: `localterra`,
-  });
+  const terra = new LCDClient(LCDCClientConfig);
 
   // possible screens
   // make a move
@@ -406,12 +407,27 @@ const PlayGame = () => {
     }
   };
 
+  const handleNewGameState = (newGameState: GameState) => {
+    if (JSON.stringify(newGameState) !== JSON.stringify(gameState)) {
+      // the game state changed!
+      // options:
+      // - player entered queue
+      // - player was matched
+      // - player made a move
+      // - opponent made a move
+      // - player revealed
+      // - opponent revealed
+      // no! this is not the right approach. I'm only doing this because I want to show something to Kairos. websockets is the proper way to do things
+    }
+  };
+
   useEffect(() => {
     // initial game state update for when you refresh the page
+    console.log(connectedWallet);
     console.log(playGame);
     updateGameState();
 
-    const wsclient = new WebSocketClient(`ws://localhost:26657/websocket`);
+    const wsclient = new WebSocketClient(WebsocketAddress);
 
     if (connectedWallet) {
       console.log(`Setting up subscription!`);

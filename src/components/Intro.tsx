@@ -40,7 +40,7 @@ const Intro = () => {
           <>
             {availableConnectTypes
               .filter((connectType) =>
-                [`CHROME_EXTENSION`, `WALLETCONNECT`].includes(connectType),
+                [`CHROME_EXTENSION`].includes(connectType),
               )
               .map((connectType) => (
                 <button

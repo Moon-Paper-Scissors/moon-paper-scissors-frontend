@@ -1,5 +1,5 @@
 import { withVerticalNav } from '@/components/VerticalNav';
-import { RPSContractAddress } from '@/constants';
+import { LCDCClientConfig, RPSContractAddress } from '@/constants';
 import { GetLeaderboardResponse } from '@/types/get_leaderboard_response';
 import { QueryMsg } from '@/types/query_msg';
 import { UserProfile } from '@/types/user_profile';
@@ -12,10 +12,7 @@ const Leaderboard = () => {
   const connectedWallet = useConnectedWallet();
   const [leaderboard, setLeaderboard] = useState<UserProfile[]>([]);
 
-  const terra = new LCDClient({
-    URL: `http://localhost:1317`,
-    chainID: `localterra`,
-  });
+  const terra = new LCDClient(LCDCClientConfig);
 
   const updateLeaderboard = async () => {
     if (connectedWallet) {

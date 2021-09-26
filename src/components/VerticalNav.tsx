@@ -1,3 +1,4 @@
+import { LCDCClientConfig } from '@/constants';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { LCDClient } from '@terra-money/terra.js';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
@@ -28,10 +29,7 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   const [balance, setBalance] = useState(``);
   const connectedWallet = useConnectedWallet();
 
-  const terra = new LCDClient({
-    URL: `http://localhost:1317`,
-    chainID: `localterra`,
-  });
+  const terra = new LCDClient(LCDCClientConfig);
 
   const updateBalance = () => {
     if (connectedWallet) {
@@ -53,11 +51,11 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   useEffect(() => {
     // improve code to not use setInterval
     updateBalance();
-    const interval = setInterval(() => {
-      updateBalance();
-    }, 5000);
+    // const interval = setInterval(() => {
+    //   updateBalance();
+    // }, 5000);
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, [connectedWallet]);
 
   return (

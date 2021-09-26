@@ -27,7 +27,7 @@ const testnet = {
 
 const walletConnectChainIds: Record<number, NetworkInfo> = {
   0: testnet,
-  1: mainnet,
+  // 1: mainnet,
 };
 
 const meta = {
