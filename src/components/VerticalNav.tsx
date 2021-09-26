@@ -61,7 +61,7 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   }, [connectedWallet]);
 
   return (
-    <div className="flex" style={{ width: `100vw` }}>
+    <div className="flex" style={{ width: `100vw`, height: `100vh` }}>
       <div
         style={{
           height: `100vh`,
@@ -69,36 +69,52 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
           borderRight: `solid white 2px`,
           position: `fixed`,
         }}
-        className="p-8 justify-center"
+        className="p-8 flex flex-col justify-center justify-between"
       >
         <div>
-          <p className="text-4xl dark:text-white">Moon, Paper, Scissors</p>
-        </div>
-        <div className="flex items-center text-3xl p-4 border-4 border-current text-black dark:text-white mt-10">
-          {connectedWallet && (
-            <>
-              <img
-                style={{ height: `40px`, marginRight: `15px` }}
-                src={`https://avatars.dicebear.com/api/identicon/${connectedWallet.walletAddress}.svg`}
-              />
+          <div>
+            <p className="text-4xl dark:text-white">Moon, Paper, Scissors</p>
+          </div>
+          <div className="flex items-center text-3xl p-4 border-4 border-current text-black dark:text-white mt-10">
+            {connectedWallet && (
+              <>
+                <img
+                  style={{ height: `40px`, marginRight: `15px` }}
+                  src={`https://avatars.dicebear.com/api/identicon/${connectedWallet.walletAddress}.svg`}
+                />
 
-              <div>
-                <p className="max-w-xs md:max-w-prose text-2xl md:text-2xl dark:text-white">
-                  {formatAddressShort(connectedWallet.walletAddress)}
-                </p>
-                <p className="max-w-xs md:max-w-prose text-xl dark:text-white">
-                  {balance}
-                </p>
-              </div>
-            </>
-          )}
+                <div>
+                  <p className="max-w-xs md:max-w-prose text-2xl md:text-2xl dark:text-white">
+                    {formatAddressShort(connectedWallet.walletAddress)}
+                  </p>
+                  <p className="max-w-xs md:max-w-prose text-xl dark:text-white">
+                    {balance}
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="mt-10">
+            <NavItem link="/dashboard/play-game" text="Play Game" />
+            <NavItem link="/dashboard/leaderboard" text="Leaderboard" />
+            <NavItem link="/dashboard/faq" text="FAQ" />
+            {/* <NavItem link="/dashboard/profile" text="Your Profile" /> */}
+            <NavItem link="/dashboard/disconnect" text="Disconnect" />
+          </div>
         </div>
-        <div className="mt-10">
-          <NavItem link="/dashboard/play-game" text="Play Game" />
-          <NavItem link="/dashboard/leaderboard" text="Leaderboard" />
-          <NavItem link="/dashboard/faq" text="FAQ" />
-          {/* <NavItem link="/dashboard/profile" text="Your Profile" /> */}
-          <NavItem link="/dashboard/disconnect" text="Disconnect" />
+        <div className="my-4">
+          <p className="text-xl dark:text-white">
+            Created by{` `}
+            <a
+              className="underline"
+              href="https://twitter.com/ruborcalor"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Cole Killian
+            </a>
+          </p>
         </div>
       </div>
       <div style={{ padding: `50px`, width: `100%`, marginLeft: `300px` }}>
