@@ -57,6 +57,7 @@ export interface GameState {
   player2_hands_won: number;
   player2_move?: PlayerMove | null;
   result?: GameResult | null;
+  updated_at: number;
   [k: string]: unknown;
 }
 export interface Coin {

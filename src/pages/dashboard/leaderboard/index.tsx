@@ -1,11 +1,77 @@
 import { withVerticalNav } from '@/components/VerticalNav';
+import { RPSContractAddress } from '@/constants';
+import { GetLeaderboardResponse } from '@/types/get_leaderboard_response';
+import { QueryMsg } from '@/types/query_msg';
+import { UserProfile } from '@/types/user_profile';
+import { formatAddressShort } from '@/utils/addressHelpers';
+import { LCDClient } from '@terra-money/terra.js';
+import { useConnectedWallet } from '@terra-money/wallet-provider';
+import { useEffect, useState } from 'react';
 
-const Leaderboard = () => (
-  <div>
-    <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
-      Leaderboard
-    </p>
-  </div>
-);
+const Leaderboard = () => {
+  const connectedWallet = useConnectedWallet();
+  const [leaderboard, setLeaderboard] = useState<UserProfile[]>([]);
+
+  const terra = new LCDClient({
+    URL: `http://localhost:1317`,
+    chainID: `localterra`,
+  });
+
+  const updateLeaderboard = async () => {
+    if (connectedWallet) {
+      console.log(`UPDATING LEADERBOARD`);
+      // get the leaderboard
+      const query_msg: QueryMsg = {
+        get_leaderboard: {},
+      };
+
+      const res = (await terra.wasm.contractQuery(
+        RPSContractAddress,
+        query_msg,
+      )) as GetLeaderboardResponse;
+
+      console.info(res);
+
+      setLeaderboard(res.leaderboard);
+    } else {
+      console.log(`Wallet not connected!`);
+    }
+  };
+
+  useEffect(() => {
+    updateLeaderboard();
+  }, [connectedWallet]);
+  return (
+    <div className="mt-20">
+      <p className="text-6xl dark:text-white mb-20">Leaderboard</p>
+      <div className="flex justify-around items-center h-20">
+        <span className="dark:text-white text-3xl text-center flex-1">
+          Player
+        </span>
+        <span className="dark:text-white text-3xl text-center flex-1">
+          Games Won
+        </span>
+        <span className="dark:text-white text-3xl text-center flex-1">
+          Winnings (uluna)
+        </span>
+      </div>
+      <hr style={{ borderTop: `4px solid white` }} />
+      {leaderboard.map((userProfile) => (
+        <div
+          key={userProfile.address}
+          className="flex justify-around items-center h-20"
+        >
+          <span className="dark:text-white text-3xl text-center flex-1">
+            {formatAddressShort(userProfile.address)}
+          </span>
+          <span className="dark:text-white text-3xl text-center flex-1">{`${userProfile.num_games_won} / ${userProfile.num_games_played}`}</span>
+          <span className="dark:text-white text-3xl text-center flex-1">
+            {userProfile.winnings}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default () => withVerticalNav(<Leaderboard />);

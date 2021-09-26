@@ -12,6 +12,11 @@ export type ExecuteMsg =
       };
     }
   | {
+      leave_waiting_queue: {
+        [k: string]: unknown;
+      };
+    }
+  | {
       commit_move: {
         hashed_move: string;
         player1: string;
@@ -25,6 +30,18 @@ export type ExecuteMsg =
         nonce: string;
         player1: string;
         player2: string;
+        [k: string]: unknown;
+      };
+    }
+  | {
+      claim_game: {
+        player1: string;
+        player2: string;
+        [k: string]: unknown;
+      };
+    }
+  | {
+      forfeit_game: {
         [k: string]: unknown;
       };
     }

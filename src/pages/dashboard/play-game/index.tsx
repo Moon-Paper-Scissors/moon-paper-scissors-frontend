@@ -1,4 +1,5 @@
 import { withVerticalNav } from '@/components/VerticalNav';
+import { RPSContractAddress } from '@/constants';
 import { ExecuteMsg, GameMove } from '@/types/execute_msg';
 import { GameState } from '@/types/game_state';
 import { GetGameByPlayerResponse } from '@/types/get_game_by_player_response';
@@ -24,7 +25,26 @@ import PaperPixelArt from '../../../../public/images/paper.png';
 import RockPixelArt from '../../../../public/images/rock.png';
 import ScissorsPixelArt from '../../../../public/images/scissors.png';
 
-const contractAddress = `terra1tndcaqxkpc5ce9qee5ggqf430mr2z3pefe5wj6`;
+const useDotDotDot = () => {
+  const [dots, setDots] = useState(`...`);
+
+  useEffect(() => {
+    const interval = setTimeout(() => {
+      if (dots === `...`) {
+        setDots(`.`);
+      } else if (dots === `.`) {
+        setDots(`..`);
+      } else if (dots === `..`) {
+        setDots(`...`);
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(interval);
+    };
+  });
+  return dots;
+};
 
 const getGameStatus = (game: GameState, walletAddress: string) => {
   let newGameStatus;
@@ -101,12 +121,11 @@ const PlayGame = () => {
       gameState && connectedWallet
         ? getGameStatus(gameState, connectedWallet.walletAddress)
         : null,
-
-    [gameState],
+    [gameState, connectedWallet],
   );
   // when playing
   const [gameMove, setGameMove] = useState<GameMove | null>(null);
-  const [nonce, setNonce] = useState(``);
+  const [nonce, setNonce] = useState<string | null>(null);
   const [playGame, setPlayGame] = useState<PlayGame | null>(null);
   // const [playGame, setPlayGame] = useState<PlayGame | null>({
   //   player1_move: 'Rock' as GameMove,
@@ -147,7 +166,7 @@ const PlayGame = () => {
         msgs: [
           new MsgExecuteContract(
             connectedWallet.walletAddress,
-            contractAddress,
+            RPSContractAddress,
             joinGameMessage,
             { uluna: betAmount },
           ),
@@ -156,6 +175,69 @@ const PlayGame = () => {
 
       console.log(`JOIN GAME TRANSACTION RESULT`);
       debugTransaction(result);
+    }
+  };
+
+  const leaveWaitingQueue = async () => {
+    if (connectedWallet) {
+      // try to join a game
+      const leaveWaitingQueueMessage: ExecuteMsg = {
+        leave_waiting_queue: {},
+      };
+
+      // sent the transaction to request to join a game
+      const result = await connectedWallet.post({
+        fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+        msgs: [
+          new MsgExecuteContract(
+            connectedWallet.walletAddress,
+            RPSContractAddress,
+            leaveWaitingQueueMessage,
+          ),
+        ],
+      });
+    }
+  };
+
+  const claimGame = async () => {
+    if (connectedWallet && gameState) {
+      // try to join a game
+      const claimGameMessage: ExecuteMsg = {
+        claim_game: { player1: gameState.player1, player2: gameState.player2 },
+      };
+
+      // sent the transaction to try to claim the game
+      const result = await connectedWallet.post({
+        fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+        msgs: [
+          new MsgExecuteContract(
+            connectedWallet.walletAddress,
+            RPSContractAddress,
+            claimGameMessage,
+          ),
+        ],
+      });
+    }
+  };
+
+  const forfeit = async () => {
+    if (connectedWallet) {
+      // try to join a game
+      const forfeitMessage: ExecuteMsg = {
+        forfeit_game: {},
+      };
+
+      // sent the transaction to request to join a game
+      const result = await connectedWallet.post({
+        fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+        msgs: [
+          new MsgExecuteContract(
+            connectedWallet.walletAddress,
+            RPSContractAddress,
+            forfeitMessage,
+          ),
+        ],
+      });
     }
   };
 
@@ -179,7 +261,7 @@ const PlayGame = () => {
         msgs: [
           new MsgExecuteContract(
             connectedWallet.walletAddress,
-            contractAddress,
+            RPSContractAddress,
             commitMoveMessage,
           ),
         ],
@@ -194,7 +276,12 @@ const PlayGame = () => {
   };
 
   const revealMove = async () => {
-    if (gameState && connectedWallet && gameMove) {
+    if (gameState && connectedWallet) {
+      if (!gameMove || !nonce) {
+        alert(`Can't reveal move :( Did you refresh the page?`);
+        return;
+      }
+
       // upsert game message
       const revealMoveMessage: ExecuteMsg = {
         reveal_move: {
@@ -211,7 +298,7 @@ const PlayGame = () => {
         msgs: [
           new MsgExecuteContract(
             connectedWallet.walletAddress,
-            contractAddress,
+            RPSContractAddress,
             revealMoveMessage,
           ),
         ],
@@ -223,19 +310,14 @@ const PlayGame = () => {
 
   const updateGameState = async () => {
     if (connectedWallet) {
-      // console.log('INIT LOCAL TERRA');
-      // get terra
-
       // QUERY GAME STATUS
       const query_msg: QueryMsg = {
         get_game_by_player: {
           player: connectedWallet.walletAddress,
         },
       };
-      // QUERY GAME STATUS
-      // console.log('QUERYING GAME STATE');
       const res = (await terra.wasm.contractQuery(
-        contractAddress,
+        RPSContractAddress,
         query_msg,
       )) as GetGameByPlayerResponse;
       console.info(res);
@@ -284,14 +366,42 @@ const PlayGame = () => {
           game_over: false,
         });
       } else if (res.game_won) {
+        // game was won
+        // run the relevant animation
         setPlayGame({
           player1_move: res.player1_game_move as GameMove,
           player2_move: res.player2_game_move as GameMove,
           game_over: true,
         });
+      }
+    } else if (res.action === `leave_waiting_queue`) {
+      // player left the waiting queue
+      // set screen back to init
+      setScreenState(`Init`);
+    } else if (res.action === `forfeit_game`) {
+      // the game was forfeit
 
-        // game was won
-        // run the relevant animation
+      if (res.game_forfeit_by === connectedWallet?.walletAddress) {
+        // if forfeit by you then send you to the init screen
+        setScreenState(`Init`);
+      } else {
+        // if forfeit by opponent, then show that opponent forfeit
+        alert(`Your opponent forfeited. You Win!`);
+        setScreenState(`Init`);
+      }
+    } else if (res.action === `claim_game`) {
+      if (res.game_claimed_by === connectedWallet?.walletAddress) {
+        // you claimed the game successfully
+        alert(
+          `You claimed victory because your opponent took too long to move. You Win!`,
+        );
+        setScreenState(`Init`);
+      } else {
+        // someone other than yourself (your opponent) claimed the game
+        alert(
+          `Your opponent claimed victory because you took too long to move... Better luck next time.`,
+        );
+        setScreenState(`Init`);
       }
     }
   };
@@ -313,7 +423,7 @@ const PlayGame = () => {
       wsclient.subscribe(
         `Tx`,
         {
-          'execute_contract.contract_address': contractAddress,
+          'execute_contract.contract_address': RPSContractAddress,
           'wasm.players': [`CONTAINS`, connectedWallet.walletAddress],
         },
         (data) => {
@@ -361,28 +471,27 @@ const PlayGame = () => {
     </>
   );
 
-  // if (screenState === `Finding Opponent` || !gameState) {
   const FindingOpponentScreen = () => {
-    const [loadingText, setLoadingText] = useState(`Finding an opponent...`);
-
-    useEffect(() => {
-      const interval = setTimeout(() => {
-        if (loadingText === `Finding an opponent...`) {
-          setLoadingText(`Finding an opponent.`);
-        } else if (loadingText === `Finding an opponent.`) {
-          setLoadingText(`Finding an opponent..`);
-        } else if (loadingText === `Finding an opponent..`) {
-          setLoadingText(`Finding an opponent...`);
-        }
-      }, 500);
-
-      return () => {
-        clearTimeout(interval);
-      };
-    }, [loadingText]);
+    const dots = useDotDotDot();
 
     return (
-      <p className="text-2xl md:text-3xl dark:text-white">{loadingText}</p>
+      <>
+        <p className="text-2xl md:text-3xl dark:text-white">{`Finding an opponent${dots}`}</p>
+
+        <div>
+          <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+            Abort
+          </p>
+
+          <button
+            type="button"
+            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+            onClick={() => leaveWaitingQueue()}
+          >
+            Leave Waiting Queue
+          </button>
+        </div>
+      </>
     );
   };
 
@@ -558,6 +667,98 @@ const PlayGame = () => {
     );
   };
 
+  const WaitingForOpponentToMove = () => {
+    const dots = useDotDotDot();
+    const [countDown, setCountDown] = useState<number | null>(null);
+
+    // set timer so that button for claiming game is shown after 10 seconds
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        setCountDown(50);
+      }, 10000);
+    }, []);
+
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        if (countDown && countDown > 0) {
+          setCountDown(countDown - 1);
+        }
+      }, 1000);
+
+      return () => clearTimeout(timeout);
+    }, [countDown]);
+
+    return (
+      <>
+        <p className="text-2xl md:text-3xl dark:text-white">{`Waiting for opponent to move${dots}`}</p>
+
+        {countDown != null && (
+          <div>
+            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+              {`You can claim the game if your opponent doesn't move in the next ${countDown} seconds`}
+            </p>
+
+            {countDown === 0 && (
+              <button
+                type="button"
+                className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                onClick={() => claimGame()}
+              >
+                Claim Game
+              </button>
+            )}
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const WaitingForOpponentToReveal = () => {
+    const dots = useDotDotDot();
+    const [countDown, setCountDown] = useState<number | null>(null);
+
+    // set timer so that button for claiming game is shown after 10 seconds
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        setCountDown(50);
+      }, 10000);
+    }, []);
+
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        if (countDown && countDown > 0) {
+          setCountDown(countDown - 1);
+        }
+      }, 1000);
+
+      return () => clearTimeout(timeout);
+    }, [countDown]);
+
+    return (
+      <>
+        <p className="text-2xl md:text-3xl dark:text-white">{`Waiting for opponent to reveal${dots}`}</p>
+
+        {countDown != null && (
+          <div>
+            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+              {`You can claim the game if your opponent doesn't reveal in the next ${countDown} seconds`}
+            </p>
+
+            {countDown === 0 && (
+              <button
+                type="button"
+                className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                onClick={() => claimGame()}
+              >
+                Claim Game
+              </button>
+            )}
+          </div>
+        )}
+      </>
+    );
+  };
+
   const PlayingScreen = () => (
     <div>
       {gameState && connectedWallet && playGame === null ? (
@@ -632,35 +833,43 @@ const PlayGame = () => {
                 );
               }
               if (gameStatus === `Waiting for opponent to move`) {
-                return (
-                  <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
-                    {gameStatus}
-                  </p>
-                );
+                return <WaitingForOpponentToMove />;
               }
               if (gameStatus === `Your Turn to Reveal`) {
                 return (
-                  <div>
-                    <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
-                      Reveal
-                    </p>
+                  <div className="max-w-lg flex items-center justify-between mt-10">
+                    <div>
+                      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+                        Reveal
+                      </p>
 
-                    <button
-                      type="button"
-                      className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-                      onClick={() => revealMove()}
-                    >
-                      Reveal Move
-                    </button>
+                      <button
+                        type="button"
+                        className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                        onClick={() => revealMove()}
+                      >
+                        Reveal Move
+                      </button>
+                    </div>
+
+                    {/* <div>
+                      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+                        Forfeit
+                      </p>
+
+                      <button
+                        type="button"
+                        className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                        onClick={() => forfeit()}
+                      >
+                        Forfeit
+                      </button>
+                    </div> */}
                   </div>
                 );
               }
               if (gameStatus === `Waiting for opponent to reveal`) {
-                return (
-                  <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
-                    {gameStatus}
-                  </p>
-                );
+                return <WaitingForOpponentToReveal />;
               }
               return (
                 <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
