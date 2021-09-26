@@ -123,6 +123,7 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
           padding: `50px`,
           // width: `100%`,
           marginLeft: `300px`,
+          zIndex: 20,
           // height: '100vh',
         }}
       >

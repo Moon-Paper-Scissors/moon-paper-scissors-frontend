@@ -818,14 +818,18 @@ const PlayGame = () => {
                     </p>
 
                     <div className="max-w-2xl flex items-center justify-between mt-10">
-                      {[`Rock`, `Paper`, `Scissors`].map((move) => (
+                      {[
+                        [`Moon`, `Rock`],
+                        [`Paper`, `Paper`],
+                        [`Scissors`, `Scissors`],
+                      ].map(([name, move]) => (
                         <button
                           type="button"
                           className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
                           key={`${move}`}
                           onClick={() => commitMove(move as GameMove)}
                         >
-                          {move}
+                          {name}
                         </button>
                       ))}
                     </div>

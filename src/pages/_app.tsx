@@ -1,3 +1,4 @@
+import Particles from '@/components/ParticleComponent';
 import '@/styles/tailwind.css';
 import {
   NetworkInfo,
@@ -10,7 +11,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { FC } from 'react';
 import 'tailwindcss/tailwind.css';
-import MoonPixelArt from '../../public/images/moon-pixel-art.png';
+import MoonPixelArt from '../../public/images/moon-pixel-art-no-stars.png';
 
 const mainnet = {
   name: `mainnet`,
@@ -57,23 +58,42 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
         <meta property="twitter:image" content={meta.url + meta.image} />
       </Head>
       <ThemeProvider enableColorScheme attribute="class">
-        <div className="dark">
-          <div className="min-h-screen dark:bg-black">
-            {/* flex flex-col items-center justify-center  */}
-            <div
-              style={{
-                position: `fixed`,
-                top: 0,
-                right: 0,
-                transform: `translate(50%, -40%)`,
-              }}
-            >
-              <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
-            </div>
-            <div style={{ zIndex: 10, width: `100vw` }}>
-              <Component {...pageProps} />
-            </div>
+        <div
+          className="dark"
+          style={{
+            position: `absolute`,
+            top: 0,
+            left: 0,
+            width: `100%`,
+            height: `100%`,
+          }}
+        >
+          <Particles />
+
+          <div
+            style={{
+              position: `fixed`,
+              top: 0,
+              right: 0,
+              transform: `translate(50%, -40%)`,
+              zIndex: 1,
+            }}
+          >
+            <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
           </div>
+          <div
+            className="min-h-screen"
+            style={{
+              zIndex: 10,
+              position: `absolute`,
+              width: `100vw`,
+              height: `100vh`,
+              overflow: `scroll`,
+            }}
+          >
+            <Component {...pageProps} />
+          </div>
+
           {/* <div className="flex flex-1 items-center justify-center">
           </div>
           <div className="my-4">
