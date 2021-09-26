@@ -33,8 +33,8 @@ const Intro = () => {
         victory or die trying. May the best lunatic win :)
       </p>
       <div
-        className="flex items-center justify-between"
-        style={{ width: `650px` }}
+        className="flex items-center justify-evenly"
+        style={{ width: `700px` }}
       >
         {status === WalletStatus.WALLET_NOT_CONNECTED && (
           <>

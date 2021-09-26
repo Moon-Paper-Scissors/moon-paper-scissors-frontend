@@ -115,7 +115,7 @@ const FAQ = () => (
         Has The Smart Contract Been Audited Yet?
       </p>
       <p className="text-3xl dark:text-white">
-        No the smart contract has not been audited yet! Use at your own risk! ;)
+        No the smart contract has not been audited yet, use at your own risk! ;)
       </p>
     </div>
   </div>

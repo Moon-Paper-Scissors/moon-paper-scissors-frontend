@@ -15,14 +15,14 @@ import MoonPixelArt from '../../public/images/moon-pixel-art-no-stars.png';
 
 const mainnet = {
   name: `mainnet`,
-  chainID: `columbus-4`,
+  chainID: `columbus-5`,
   lcd: `https://lcd.terra.dev`,
 };
 
 const testnet = {
   name: `testnet`,
-  chainID: `tequila-0004`,
-  lcd: `https://tequila-lcd.terra.dev`,
+  chainID: `bombay-11`,
+  lcd: `https://bombay-lcd.terra.dev`,
 };
 
 const walletConnectChainIds: Record<number, NetworkInfo> = {
@@ -116,13 +116,13 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 
   return typeof window !== `undefined` ? (
     <WalletProvider
-      defaultNetwork={mainnet}
+      defaultNetwork={testnet}
       walletConnectChainIds={walletConnectChainIds}
     >
       {main}
     </WalletProvider>
   ) : (
-    <StaticWalletProvider defaultNetwork={mainnet}>{main}</StaticWalletProvider>
+    <StaticWalletProvider defaultNetwork={testnet}>{main}</StaticWalletProvider>
   );
 };
 

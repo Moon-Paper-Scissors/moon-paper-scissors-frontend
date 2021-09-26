@@ -128,9 +128,9 @@ const PlayGame = () => {
   const [nonce, setNonce] = useState<string | null>(null);
   const [playGame, setPlayGame] = useState<PlayGame | null>(null);
   // const [playGame, setPlayGame] = useState<PlayGame | null>({
-  //   player1_move: 'Rock' as GameMove,
-  //   player2_move: 'Paper' as GameMove,
-  //   // hand_won: 'player1',
+  //   player1_move: `Rock` as GameMove,
+  //   player2_move: `Paper` as GameMove,
+  //   game_over: false,
   // });
 
   const terra = new LCDClient({
@@ -451,10 +451,10 @@ const PlayGame = () => {
     //   <p className="text-6xl dark:text-white">Play Game</p>
     <>
       <p className="text-3xl dark:text-white mt-20">
-        Play with a stranger (best out of 3)
+        Battle A Stranger (best out of 3)
       </p>
 
-      <div className="max-w-3xl flex items-center justify-between mt-10">
+      <div className="max-w-4xl flex items-center justify-between mt-10">
         {[`100000`, `1000000`, `5000000`].map((betAmount) => (
           <button
             type="button"
@@ -478,17 +478,17 @@ const PlayGame = () => {
       <>
         <p className="text-2xl md:text-3xl dark:text-white">{`Finding an opponent${dots}`}</p>
 
-        <div>
-          <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+        <div className="mt-10">
+          {/* <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
             Abort
-          </p>
+          </p> */}
 
           <button
             type="button"
             className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
             onClick={() => leaveWaitingQueue()}
           >
-            Leave Waiting Queue
+            Abort Mission
           </button>
         </div>
       </>
@@ -618,13 +618,13 @@ const PlayGame = () => {
     if (gameOver) {
       return (
         <>
-          <p className="text-6xl text-center dark:text-white mb-10">
+          <p className="text-6xl text-center dark:text-white">
             {`${getMessage()}`}
           </p>
 
           <button
             type="button"
-            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 mt-10"
             onClick={() => setScreenState(`Init`)}
           >
             Play Again
@@ -638,12 +638,19 @@ const PlayGame = () => {
         {!showResult ? (
           <>
             <p
-              className="text-6xl text-center dark:text-white mb-10"
+              className="text-6xl text-center dark:text-white"
               style={{ visibility: `hidden` }}
             >
               {`${getMessage()}`}
             </p>
-            <div style={{ display: `flex`, justifyContent: `space-between` }}>
+            <div
+              style={{
+                display: `flex`,
+                justifyContent: `space-between`,
+                position: `relative`,
+                bottom: `80px`,
+              }}
+            >
               <UpAndDownSpan>
                 <LeftMove gameMove={`Rock` as GameMove} />
               </UpAndDownSpan>
@@ -654,10 +661,17 @@ const PlayGame = () => {
           </>
         ) : (
           <>
-            <p className="text-6xl text-center dark:text-white mb-10">
+            <p className="text-6xl text-center dark:text-white">
               {`${getMessage()}`}
             </p>
-            <div style={{ display: `flex`, justifyContent: `space-between` }}>
+            <div
+              style={{
+                display: `flex`,
+                justifyContent: `space-between`,
+                position: `relative`,
+                bottom: `80px`,
+              }}
+            >
               <LeftMove gameMove={playGame.player1_move} />
               <RightMove gameMove={playGame.player2_move} />
             </div>
@@ -774,12 +788,7 @@ const PlayGame = () => {
               Bet Amount:{` `}
               {gameState &&
                 gameState.bet_amount
-                  .map(
-                    (coin) =>
-                      `${
-                        parseInt(coin.amount, 10) / 1000000
-                      } ${coin.denom.substr(1)}, `,
-                  )
+                  .map((coin) => `${parseInt(coin.amount, 10)} ${coin.denom}, `)
                   .join(``)
                   .slice(0, -2)}
             </p>
