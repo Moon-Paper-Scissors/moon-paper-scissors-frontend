@@ -133,6 +133,7 @@ const PlayGame = () => {
   const [gameMove, setGameMove] = useState<GameMove | null>(null);
   const [nonce, setNonce] = useState<string | null>(null);
   const [playGame, setPlayGame] = useState<PlayGame | null>(null);
+  const [loading, setLoading] = useState(false);
   // const [playGame, setPlayGame] = useState<PlayGame | null>({
   //   player1_move: `Rock` as GameMove,
   //   player2_move: `Paper` as GameMove,
@@ -176,6 +177,8 @@ const PlayGame = () => {
         ],
       });
 
+      setLoading(true);
+
       console.log(`JOIN GAME TRANSACTION RESULT`);
       debugTransaction(result);
     }
@@ -199,6 +202,8 @@ const PlayGame = () => {
           ),
         ],
       });
+
+      setLoading(true);
     }
   };
 
@@ -220,6 +225,8 @@ const PlayGame = () => {
           ),
         ],
       });
+
+      setLoading(true);
     }
   };
 
@@ -241,6 +248,8 @@ const PlayGame = () => {
           ),
         ],
       });
+
+      setLoading(true);
     }
   };
 
@@ -275,6 +284,7 @@ const PlayGame = () => {
 
       setGameMove(newGameMove);
       setNonce(newNonce);
+      setLoading(true);
     }
   };
 
@@ -308,10 +318,12 @@ const PlayGame = () => {
       });
 
       console.log(result);
+      setLoading(true);
     }
   };
 
   const updateGameState = async () => {
+    setLoading(false);
     if (connectedWallet) {
       // QUERY GAME STATUS
       const query_msg: QueryMsg = {
@@ -479,7 +491,6 @@ const PlayGame = () => {
             );
           };
           ws.onmessage = function (message) {
-            console.log(`NEW MESSage`);
             /* process messages here */
             const data = JSON.parse(message.data.toString());
             const rpsTransactions = data.data.txs.reduce(
@@ -499,6 +510,16 @@ const PlayGame = () => {
 
                 if (rpsExecuteEvent) {
                   // console.log(txn);
+
+                  if (
+                    rpsExecuteEvent.attributes.some(
+                      (attr: any) =>
+                        attr.key === `sender` &&
+                        attr.value === connectedWallet.walletAddress,
+                    )
+                  ) {
+                    setLoading(false);
+                  }
 
                   const playerExecuteEvent = txn.logs[0].events.find(
                     (tmpEvent: any) =>
@@ -1035,6 +1056,49 @@ const PlayGame = () => {
     </div>
   );
 
+  const LoadingModal = () => {
+    const dots = useDotDotDot();
+
+    return (
+      <div
+        className="fixed inset-0 overflow-y-auto h-full w-full m-0"
+        id="my-modal"
+      >
+        <div className="relative top-80 mx-auto p-5 border-4 w-96 shadow-lg bg-black">
+          {/* <div className="mt-3 text-center flex justify-center items-center"> */}
+          <h3 className="text-5xl leading-6 text-white">Loading{dots}</h3>
+          {/* <br />
+
+                <form onSubmit={birthPony} className="flex flex-col w-full max-w-sm">
+                  <input
+                    className="text-3xl py-1 px-4 text-center border-4 border-current text-black dark:text-white dark:bg-black focus:outline-none focus-visible:ring"
+                    type="text"
+                    placeholder="Your awesome new pet"
+                    onChange={event => {
+                      event.preventDefault()
+                      setName((event.target as HTMLInputElement).value)
+                    }}
+                    value={name}
+                    required
+                  />
+                  <button type="submit" className="text-3xl p-1 border-4 border-t-0 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400">
+                    Birth
+                  </button>
+                </form> */}
+          {/* <div className="mt-2 px-7 py-3">
+                <p className="text-sm text-gray-500">Account has been successfully registered!</p>
+              </div>
+              <div className="items-center px-4 py-3">
+                <button id="ok-btn" className="px-4 py-2 bg-black text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300">
+                  OK
+                </button>
+              </div> */}
+          {/* </div> */}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="mt-20">
       <p className="text-6xl dark:text-white mb-10">
@@ -1049,6 +1113,7 @@ const PlayGame = () => {
         }
         return <PlayingScreen />;
       })()}
+      {loading && <LoadingModal />}
     </div>
   );
 };
