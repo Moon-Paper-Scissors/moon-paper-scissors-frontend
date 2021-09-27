@@ -946,7 +946,12 @@ const PlayGame = () => {
               Bet Amount:{` `}
               {gameState &&
                 gameState.bet_amount
-                  .map((coin) => `${parseInt(coin.amount, 10)} ${coin.denom}, `)
+                  .map(
+                    (coin) =>
+                      `${
+                        parseInt(coin.amount, 10) / 1000000
+                      } ${coin.denom.slice(1)}, `,
+                  )
                   .join(``)
                   .slice(0, -2)}
             </p>

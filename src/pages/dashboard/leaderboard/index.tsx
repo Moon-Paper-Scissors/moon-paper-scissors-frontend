@@ -49,24 +49,26 @@ const Leaderboard = () => {
           Games Won
         </span>
         <span className="dark:text-white text-3xl text-center flex-1">
-          Winnings (uluna)
+          Winnings (luna)
         </span>
       </div>
       <hr style={{ borderTop: `4px solid white` }} />
-      {leaderboard.map((userProfile) => (
-        <div
-          key={userProfile.address}
-          className="flex justify-around items-center h-20"
-        >
-          <span className="dark:text-white text-3xl text-center flex-1">
-            {formatAddressShort(userProfile.address)}
-          </span>
-          <span className="dark:text-white text-3xl text-center flex-1">{`${userProfile.num_games_won} / ${userProfile.num_games_played}`}</span>
-          <span className="dark:text-white text-3xl text-center flex-1">
-            {userProfile.winnings}
-          </span>
-        </div>
-      ))}
+      {leaderboard
+        .sort((a, b) => (a.winnings < b.winnings ? 1 : -1))
+        .map((userProfile) => (
+          <div
+            key={userProfile.address}
+            className="flex justify-around items-center h-20"
+          >
+            <span className="dark:text-white text-3xl text-center flex-1">
+              {formatAddressShort(userProfile.address)}
+            </span>
+            <span className="dark:text-white text-3xl text-center flex-1">{`${userProfile.num_games_won} / ${userProfile.num_games_played}`}</span>
+            <span className="dark:text-white text-3xl text-center flex-1">
+              {userProfile.winnings / 1000000}
+            </span>
+          </div>
+        ))}
     </div>
   );
 };
