@@ -21,3 +21,5 @@ export const LCDCClientConfig = {
 
 // bombay
 export const WebsocketAddress = `ws://bombay-lcd.terra.dev:26657/websocket`;
+
+export const environment = `bombay`;

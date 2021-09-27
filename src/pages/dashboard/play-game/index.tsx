@@ -1,5 +1,6 @@
 import { withVerticalNav } from '@/components/VerticalNav';
 import {
+  environment,
   LCDCClientConfig,
   RPSContractAddress,
   WebsocketAddress,
@@ -22,6 +23,7 @@ import {
   useConnectedWallet,
 } from '@terra-money/wallet-provider';
 import sha256 from 'crypto-js/sha256';
+import WebSocket from 'isomorphic-ws';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
@@ -407,19 +409,57 @@ const PlayGame = () => {
     }
   };
 
-  const handleNewGameState = (newGameState: GameState) => {
-    if (JSON.stringify(newGameState) !== JSON.stringify(gameState)) {
-      // the game state changed!
-      // options:
-      // - player entered queue
-      // - player was matched
-      // - player made a move
-      // - opponent made a move
-      // - player revealed
-      // - opponent revealed
-      // no! this is not the right approach. I'm only doing this because I want to show something to Kairos. websockets is the proper way to do things
-    }
-  };
+  // const handleNewGameState = (newGameState: GameState) => {
+  //   if (JSON.stringify(newGameState) !== JSON.stringify(gameState)) {
+  //     setGameState(newGameState);
+
+  //     // check if the hand is over and we need to play the animation
+  //     if (newGameState.player1_move && newGameState.player2_move) {
+  //       // the hand has just ended or the game is just beginning
+  //       // shit how do you know who played what? you know what you played...
+  //       if (
+  //         newGameState.player1_hands_won !== 0 &&
+  //         newGameState.player2_hands_won !== 0 &&
+  //         newGameState.hands_tied !== 0
+  //       ) {
+  //         // the game has not just started, so a hand has just ended
+
+  //         // need to figure out what to set play game to
+
+  //         // approach for checking claim game / win game would be checking both players profiles after the game is over and seeing who won
+  //         // then if the game was ended and there were still more moves to make
+  //         // so many if statements...
+
+  //         // now i kinda want to go back to websockets after i deleted my progres...
+  //         // websockets might be slower, but they should just work with the code i already wrote
+
+  //         setPlayGame({
+  //           player1_move: 'Rock',
+  //           player2_move: 'Rock',
+  //           game_over: true,
+  //         });
+  //       }
+  //     }
+  //     // the game state changed!
+  //     // options:
+  //     // - player entered queue (easy)
+  //     // - player was matched (easy)
+  //     // - player made a move (easy)
+  //     // - opponent made a move (easy)
+  //     // - player revealed (easy)
+  //     // - opponent revealed (easy)
+  //     // - hand over (medium)
+  //     // - leave waiting queue (medium)
+
+  //     // - game claimed (hard)
+  //     // - game forfeit (hard)
+  //     // query the player state and see who won the game
+  //     // alternative would be to not delete games and let them still be queryable after forfeit
+
+  //     // - game
+  //     // no! this is not the right approach. I'm only doing this because I want to show something to Kairos. websockets is the proper way to do things
+  //   }
+  // };
 
   useEffect(() => {
     // initial game state update for when you refresh the page
@@ -427,9 +467,83 @@ const PlayGame = () => {
     console.log(playGame);
     updateGameState();
 
-    const wsclient = new WebSocketClient(WebsocketAddress);
-
     if (connectedWallet) {
+      if (environment === `bombay`) {
+        const connectObserver = () => {
+          const ws = new WebSocket(`wss://observer.terra.dev`);
+          ws.onopen = function () {
+            console.log(`connected to websocket. subscribing...`);
+            // subscribe to new_block events
+            ws.send(
+              JSON.stringify({ subscribe: `new_block`, chain_id: `bombay-11` }),
+            );
+          };
+          ws.onmessage = function (message) {
+            console.log(`NEW MESSage`);
+            /* process messages here */
+            const data = JSON.parse(message.data.toString());
+            const rpsTransactions = data.data.txs.reduce(
+              (acc: any[], txn: any) => {
+                if (!txn.logs) return false;
+                if (txn.logs.length === 0) return false;
+
+                const rpsExecuteEvent = txn.logs[0].events.find(
+                  (tmpEvent: any) =>
+                    tmpEvent.type === `execute_contract` &&
+                    tmpEvent.attributes.some(
+                      (attr: any) =>
+                        attr.key === `contract_address` &&
+                        attr.value === RPSContractAddress,
+                    ),
+                );
+
+                if (rpsExecuteEvent) {
+                  // console.log(txn);
+
+                  const playerExecuteEvent = txn.logs[0].events.find(
+                    (tmpEvent: any) =>
+                      tmpEvent.type === `wasm` &&
+                      tmpEvent.attributes.some(
+                        (attr: any) =>
+                          attr.key === `players` &&
+                          (attr.value as string).includes(
+                            connectedWallet.walletAddress,
+                          ),
+                      ),
+                  );
+                  acc.push(
+                    playerExecuteEvent.attributes.reduce(
+                      (accAttr: any, attr: any) => {
+                        const newVal = { [accAttr[attr.key]]: attr.value };
+                        return Object.assign(newVal, accAttr);
+                      },
+                      {},
+                    ),
+                  );
+                }
+                return acc;
+              },
+              [],
+            );
+            console.log(rpsTransactions);
+            for (let i = 0; i < rpsTransactions.length; i += 1) {
+              handleResponse(rpsTransactions[i]);
+            }
+          };
+          // ws.onclose = function (e) {
+          //   console.log('websocket closed. reopening...');
+          //   setTimeout(function () {
+          //     connectObserver();
+          //   }, 1000);
+          // };
+          return ws;
+        };
+        const ws = connectObserver();
+        return () => {
+          ws.close();
+        };
+      }
+      const wsclient = new WebSocketClient(WebsocketAddress);
       console.log(`Setting up subscription!`);
       // send tracker
 
@@ -454,11 +568,13 @@ const PlayGame = () => {
           handleResponse(res);
         },
       );
+      return () => {
+        wsclient.destroy();
+        // clearInterval(interval);
+      };
     }
-
     return () => {
-      wsclient.destroy();
-      // clearInterval(interval);
+      console.log(`Unmounting without wallet`);
     };
   }, [connectedWallet]);
 
