@@ -2,7 +2,7 @@
 // export const RPSContractAddress = `terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5`;
 
 // bombay address
-export const RPSContractAddress = `terra1jhqh7tcht5j543xs3qr7vsf26lthfl9pfpalhf`;
+export const RPSContractAddress = `terra1mpt9ja0shyslvdamjp2zqqlfe8fa9d9d29nhz3`;
 
 // // localterra
 // export const LCDCClientConfig = {
@@ -16,10 +16,7 @@ export const LCDCClientConfig = {
   chainID: `bombay-11`,
 };
 
-// // local terra
-// export const WebsocketAddress = `ws://localhost:26657/websocket`;
-
-// bombay
-export const WebsocketAddress = `ws://bombay-lcd.terra.dev:26657/websocket`;
+// local terra
+export const WebsocketAddress = `ws://localhost:26657/websocket`;
 
 export const environment = `bombay`;
