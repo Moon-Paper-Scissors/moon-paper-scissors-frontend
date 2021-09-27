@@ -840,7 +840,7 @@ const PlayGame = () => {
 
         {countDown != null && (
           <div>
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white mt-10">
               {`You can claim the game if your opponent doesn't move in the next ${countDown} seconds`}
             </p>
 
@@ -886,7 +886,7 @@ const PlayGame = () => {
 
         {countDown != null && (
           <div>
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white mt-10">
               {`You can claim the game if your opponent doesn't reveal in the next ${countDown} seconds`}
             </p>
 
