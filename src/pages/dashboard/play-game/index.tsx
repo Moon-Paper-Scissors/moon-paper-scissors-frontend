@@ -515,7 +515,7 @@ const PlayGame = () => {
                     acc.push(
                       playerExecuteEvent.attributes.reduce(
                         (accAttr: any, attr: any) => {
-                          const newVal = { [accAttr[attr.key]]: attr.value };
+                          const newVal = { [attr.key]: attr.value };
                           return Object.assign(newVal, accAttr);
                         },
                         {},
