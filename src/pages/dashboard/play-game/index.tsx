@@ -644,7 +644,7 @@ const PlayGame = () => {
         } else {
           setPlayGame(null);
         }
-      }, 3000);
+      }, 5000);
 
       return () => {
         clearTimeout(resultTimeout);
@@ -822,8 +822,11 @@ const PlayGame = () => {
     // set timer so that button for claiming game is shown after 10 seconds
     useEffect(() => {
       const timeout = setTimeout(() => {
-        setCountDown(50);
-      }, 10000);
+        setCountDown(40);
+      }, 20000);
+      return () => {
+        clearTimeout(timeout);
+      };
     }, []);
 
     useEffect(() => {
@@ -868,8 +871,8 @@ const PlayGame = () => {
     // set timer so that button for claiming game is shown after 10 seconds
     useEffect(() => {
       const timeout = setTimeout(() => {
-        setCountDown(50);
-      }, 10000);
+        setCountDown(40);
+      }, 20000);
     }, []);
 
     useEffect(() => {

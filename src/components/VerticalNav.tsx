@@ -51,11 +51,11 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   useEffect(() => {
     // improve code to not use setInterval
     updateBalance();
-    // const interval = setInterval(() => {
-    //   updateBalance();
-    // }, 5000);
+    const interval = setInterval(() => {
+      updateBalance();
+    }, 5000);
 
-    // return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, [connectedWallet]);
 
   return (
