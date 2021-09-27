@@ -511,15 +511,17 @@ const PlayGame = () => {
                           ),
                       ),
                   );
-                  acc.push(
-                    playerExecuteEvent.attributes.reduce(
-                      (accAttr: any, attr: any) => {
-                        const newVal = { [accAttr[attr.key]]: attr.value };
-                        return Object.assign(newVal, accAttr);
-                      },
-                      {},
-                    ),
-                  );
+                  if (playerExecuteEvent) {
+                    acc.push(
+                      playerExecuteEvent.attributes.reduce(
+                        (accAttr: any, attr: any) => {
+                          const newVal = { [accAttr[attr.key]]: attr.value };
+                          return Object.assign(newVal, accAttr);
+                        },
+                        {},
+                      ),
+                    );
+                  }
                 }
                 return acc;
               },
