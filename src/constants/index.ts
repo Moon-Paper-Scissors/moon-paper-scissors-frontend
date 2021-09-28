@@ -2,7 +2,7 @@
 // export const RPSContractAddress = `terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5`;
 
 // bombay address
-export const RPSContractAddress = `terra1vqcfld6hqr96p68kl88s34ks7ad6gd6ffyxp6e`;
+export const RPSContractAddress = `terra1f5u6ds3q95jwl2y5ellsczuwd2349g68u8af4l`;
 
 // // localterra
 // export const LCDCClientConfig = {
@@ -13,7 +13,7 @@ export const RPSContractAddress = `terra1vqcfld6hqr96p68kl88s34ks7ad6gd6ffyxp6e`
 // bombay
 export const LCDCClientConfig = {
   URL: `https://bombay-lcd.terra.dev`,
-  chainID: `bombay-11`,
+  chainID: `bombay-12`,
 };
 
 // local terra

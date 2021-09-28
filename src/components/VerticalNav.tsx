@@ -1,4 +1,5 @@
 import { LCDCClientConfig } from '@/constants';
+import { WalletContext } from '@/contexts/Wallet';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { LCDClient } from '@terra-money/terra.js';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
@@ -28,6 +29,7 @@ const NavItem = ({ link, text }: { link: string; text: string }) => {
 const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   const [balance, setBalance] = useState(``);
   const connectedWallet = useConnectedWallet();
+  // const WalletContext = React.createContext<ConnectedWallet>(undefined!);
 
   const terra = new LCDClient(LCDCClientConfig);
 
@@ -117,17 +119,23 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
           </p>
         </div>
       </div>
-      <div
-        style={{
-          padding: `50px`,
-          // width: `100%`,
-          marginLeft: `300px`,
-          zIndex: 20,
-          // height: '100vh',
-        }}
-      >
-        {children}
-      </div>
+      {connectedWallet ? (
+        <WalletContext.Provider value={connectedWallet}>
+          <div
+            style={{
+              padding: `50px`,
+              // width: `100%`,
+              marginLeft: `300px`,
+              zIndex: 20,
+              // height: '100vh',
+            }}
+          >
+            {children}
+          </div>
+        </WalletContext.Provider>
+      ) : (
+        <p>Wallet not connected</p>
+      )}
       {/* </div> */}
     </>
   );

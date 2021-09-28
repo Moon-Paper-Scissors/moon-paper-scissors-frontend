@@ -23,7 +23,7 @@ const mainnet = {
 
 const testnet = {
   name: `testnet`,
-  chainID: `bombay-11`,
+  chainID: `bombay-12`,
   lcd: `https://bombay-lcd.terra.dev`,
 };
 
