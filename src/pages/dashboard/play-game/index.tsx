@@ -8,6 +8,10 @@ import {
 import { ExecuteMsg, GameMove } from '@/types/execute_msg';
 import { GameState } from '@/types/game_state';
 import { GetGameByPlayerResponse } from '@/types/get_game_by_player_response';
+import {
+  GetOpenGamesResponse,
+  UnmatchedPlayer,
+} from '@/types/get_open_games_response';
 import { QueryMsg } from '@/types/query_msg';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { debugTransaction } from '@/utils/txnHelpers';
@@ -601,30 +605,117 @@ const PlayGame = () => {
     };
   }, [connectedWallet]);
 
-  const InitScreen = () => (
+  const InitScreen = () => {
     // <div className="max-w-3xl mt-20">
     //   <p className="text-6xl dark:text-white">Play Game</p>
-    <>
-      <p className="text-3xl dark:text-white mt-20">
-        Battle A Stranger (best out of 3)
-      </p>
+    const [openGames, setOpenGames] = useState<UnmatchedPlayer[] | null>(null);
 
-      <div className="max-w-4xl flex items-center justify-between mt-10">
-        {[`100000`, `1000000`, `5000000`].map((betAmount) => (
-          <button
-            type="button"
-            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-            key={`${betAmount}`}
-            onClick={() => joinGame(betAmount)}
-          >
-            Bet Amount:
-            <br />
-            {`${parseInt(betAmount, 10) / 1000000} luna`}
-          </button>
-        ))}
-      </div>
-    </>
-  );
+    const fetchOpenGames = async () => {
+      if (connectedWallet) {
+        // QUERY GAME STATUS
+        const query_msg: QueryMsg = {
+          get_open_games: {},
+        };
+        const res = (await terra.wasm.contractQuery(
+          RPSContractAddress,
+          query_msg,
+        )) as GetOpenGamesResponse;
+        console.info(res);
+        setOpenGames(res.open_games);
+      }
+    };
+
+    useEffect(() => {
+      fetchOpenGames();
+
+      const interval = setInterval(() => {
+        fetchOpenGames();
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }, []);
+
+    return (
+      <>
+        <p className="text-3xl dark:text-white mt-20">
+          Battle A Stranger (first to win 2 games)
+        </p>
+
+        <div className="max-w-4xl flex items-center justify-between mt-10">
+          {[`100000`, `1000000`, `5000000`].map((betAmount) => (
+            <button
+              type="button"
+              className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+              key={`${betAmount}`}
+              onClick={() => joinGame(betAmount)}
+            >
+              Bet Amount:
+              <br />
+              {`${parseInt(betAmount, 10) / 1000000} luna`}
+            </button>
+          ))}
+        </div>
+
+        <p className="text-3xl dark:text-white mt-20">
+          Join A Game (first to win 2 games)
+        </p>
+
+        <div className="">
+          <div className="flex justify-around items-center h-20">
+            <span className="dark:text-white text-3xl text-center flex-1">
+              Opponent
+            </span>
+            <span className="dark:text-white text-3xl text-center flex-1">
+              Bet Amount
+            </span>
+            <span className="dark:text-white text-3xl text-center flex-1">
+              Join
+            </span>
+          </div>
+          <hr style={{ borderTop: `4px solid white` }} />
+          {openGames && openGames.length > 0 ? (
+            openGames.map((openGame) => (
+              <div
+                key={openGame.address}
+                className="flex justify-around items-center h-20"
+              >
+                <span className="dark:text-white text-3xl text-center flex-1">
+                  {formatAddressShort(openGame.address)}
+                </span>
+                <span className="dark:text-white text-3xl text-center flex-1">
+                  {openGame.bet_amount
+                    .map(
+                      (coin) =>
+                        `${
+                          parseInt(coin.amount, 10) / 1000000
+                        } ${coin.denom.slice(1)}, `,
+                    )
+                    .join(``)
+                    .slice(0, -2)}
+                  {` `}
+                </span>
+                <span className="dark:text-white text-3xl text-center flex-1">
+                  <button
+                    type="button"
+                    className="text-3xl py-1 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                    onClick={() => joinGame(openGame.bet_amount[0].amount)}
+                  >
+                    Join Game
+                  </button>
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="flex justify-around items-center h-20">
+              <p className="dark:text-white text-3xl text-center flex-1">
+                No Open Games
+              </p>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
 
   const FindingOpponentScreen = () => {
     const dots = useDotDotDot();

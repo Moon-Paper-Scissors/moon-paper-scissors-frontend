@@ -25,6 +25,11 @@ export type QueryMsg =
       };
     }
   | {
+      get_open_games: {
+        [k: string]: unknown;
+      };
+    }
+  | {
       admin: {
         [k: string]: unknown;
       };
