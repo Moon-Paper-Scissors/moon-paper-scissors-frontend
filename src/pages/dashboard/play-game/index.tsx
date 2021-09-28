@@ -1,5 +1,8 @@
 import RPSApi from '@/api';
 import { LoadingModal } from '@/components/LoadingModal';
+import { FindingOpponentScreen } from '@/components/play-game/FindingOpponentScreen';
+import { InitScreen } from '@/components/play-game/InitScreen';
+import { PlayingScreen } from '@/components/play-game/PlayingScreen';
 import { withVerticalNav } from '@/components/VerticalNav';
 import {
   environment,
@@ -15,9 +18,6 @@ import { LCDClient } from '@terra-money/terra.js';
 import WebSocket from 'isomorphic-ws';
 import { NextLayoutComponentType } from 'next';
 import { useContext, useEffect, useState } from 'react';
-import { FindingOpponentScreen } from './FindingOpponentScreen';
-import { InitScreen } from './InitScreen';
-import { PlayingScreen } from './PlayingScreen';
 
 type ScreenState = 'Init' | 'Finding Opponent' | 'In Game';
 

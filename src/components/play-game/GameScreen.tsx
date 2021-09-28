@@ -5,9 +5,9 @@ import { getOpponentNumber, getPlayerNumber, getWinner } from '@/utils';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import PaperPixelArt from '../../../../public/images/paper.png';
-import RockPixelArt from '../../../../public/images/rock.png';
-import ScissorsPixelArt from '../../../../public/images/scissors.png';
+import PaperPixelArt from '../../../public/images/paper.png';
+import RockPixelArt from '../../../public/images/rock.png';
+import ScissorsPixelArt from '../../../public/images/scissors.png';
 
 interface PlayGame {
   player1_move: GameMove;
