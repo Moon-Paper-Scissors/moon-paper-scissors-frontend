@@ -5,6 +5,7 @@ import {
   RPSContractAddress,
   WebsocketAddress,
 } from '@/constants';
+import useLocalStorage from '@/hooks/useLocalStorage';
 import { ExecuteMsg, GameMove } from '@/types/execute_msg';
 import { GameState } from '@/types/game_state';
 import { GetGameByPlayerResponse } from '@/types/get_game_by_player_response';
@@ -134,8 +135,11 @@ const PlayGame = () => {
     [gameState, connectedWallet],
   );
   // when playing
-  const [gameMove, setGameMove] = useState<GameMove | null>(null);
-  const [nonce, setNonce] = useState<string | null>(null);
+  const [gameMove, setGameMove] = useLocalStorage<GameMove | null>(
+    `gameMove`,
+    null,
+  );
+  const [nonce, setNonce] = useLocalStorage(`nonce`, ``);
   const [playGame, setPlayGame] = useState<PlayGame | null>(null);
   const [loading, setLoading] = useState(false);
   // const [playGame, setPlayGame] = useState<PlayGame | null>({
