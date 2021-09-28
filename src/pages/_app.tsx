@@ -36,8 +36,8 @@ const walletConnectChainIds: Record<number, NetworkInfo> = {
 const meta = {
   title: `Moon Paper Scissors, on Terra`,
   description: `May the best lunatic win :)`,
-  url: ``,
-  image: ``,
+  url: `https://moonpaperscissors.com`,
+  image: `/images/moon-pixel-art.png`,
 };
 
 const Moon = () => {
@@ -137,22 +137,6 @@ const App: NextComponentType<AppProps, AppInitialProps, AppLayoutProps> = ({
             >
               {getLayout(<Component {...pageProps} />)}
             </NoScrollBar>
-
-            {/* <div className="flex flex-1 items-center justify-center">
-          </div>
-          <div className="my-4">
-            <p className="text-xl dark:text-white">
-              Created by{` `}
-              <a
-                className="underline"
-                href="https://twitter.com/colekillian_"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Cole Killian
-              </a>
-            </p>
-          </div> */}
           </div>
         </ThemeProvider>
       </StarModeProvider>
