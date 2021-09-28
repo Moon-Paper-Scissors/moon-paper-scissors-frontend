@@ -111,4 +111,5 @@ const LiveGames = () => {
   );
 };
 
-export default () => withVerticalNav(<LiveGames />);
+const LiveGamesWithVerticalNav = () => withVerticalNav(<LiveGames />);
+export default LiveGamesWithVerticalNav;

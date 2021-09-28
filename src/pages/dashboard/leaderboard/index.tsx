@@ -73,4 +73,5 @@ const Leaderboard = () => {
   );
 };
 
-export default () => withVerticalNav(<Leaderboard />);
+const LeaderboardWithVerticalNav = () => withVerticalNav(<Leaderboard />);
+export default LeaderboardWithVerticalNav;

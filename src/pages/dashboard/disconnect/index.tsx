@@ -21,4 +21,5 @@ const Disconnect = () => {
   );
 };
 
-export default () => withVerticalNav(<Disconnect />);
+const DisconnectWithVerticalNav = () => withVerticalNav(<Disconnect />);
+export default DisconnectWithVerticalNav;

@@ -8,4 +8,5 @@ const Profile = () => (
   </div>
 );
 
-export default () => withVerticalNav(<Profile />);
+const ProfileWithNav = () => withVerticalNav(<Profile />);
+export default ProfileWithNav;

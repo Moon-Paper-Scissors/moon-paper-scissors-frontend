@@ -121,4 +121,5 @@ const FAQ = () => (
   </div>
 );
 
-export default () => withVerticalNav(<FAQ />);
+const FAQWithVerticalNav = () => withVerticalNav(<FAQ />);
+export default FAQWithVerticalNav;
