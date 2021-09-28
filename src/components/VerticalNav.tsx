@@ -29,6 +29,7 @@ const NavItem = ({ link, text }: { link: string; text: string }) => {
 const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   const [balance, setBalance] = useState(``);
   const connectedWallet = useConnectedWallet();
+  const router = useRouter();
   // const WalletContext = React.createContext<ConnectedWallet>(undefined!);
 
   const terra = new LCDClient(LCDCClientConfig);
@@ -119,24 +120,39 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
           </p>
         </div>
       </div>
-      {connectedWallet ? (
-        <WalletContext.Provider value={connectedWallet}>
-          <div
-            style={{
-              padding: `50px`,
-              // width: `100%`,
-              marginLeft: `300px`,
-              zIndex: 20,
-              // height: '100vh',
-            }}
-          >
+      <div
+        style={{
+          padding: `50px`,
+          // width: `100%`,
+          marginLeft: `300px`,
+          zIndex: 20,
+          // height: '100vh',
+        }}
+      >
+        {connectedWallet ? (
+          <WalletContext.Provider value={connectedWallet}>
             {children}
-          </div>
-        </WalletContext.Provider>
-      ) : (
-        <p>Wallet not connected</p>
-      )}
-      {/* </div> */}
+          </WalletContext.Provider>
+        ) : (
+          <>
+            <p className="text-3xl dark:text-white">Wallet not connected.</p>
+
+            <div className="mt-10">
+              {/* <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+            Abort
+          </p> */}
+
+              <button
+                type="button"
+                className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                onClick={() => router.push(`/`)}
+              >
+                Return Home
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </>
   );
 };
