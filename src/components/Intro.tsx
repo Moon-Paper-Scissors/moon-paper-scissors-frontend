@@ -38,24 +38,32 @@ const Intro = () => {
       >
         {status === WalletStatus.WALLET_NOT_CONNECTED && (
           <>
-            {availableConnectTypes
-              .filter((connectType) =>
-                [`CHROME_EXTENSION`].includes(connectType),
-              )
-              .map((connectType) => (
-                <button
-                  type="button"
-                  className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-                  key={`connect-${connectType}`}
-                  style={{ maxWidth: `300px` }}
-                  onClick={() => connect(connectType)}
-                >
-                  Connect{` `}
-                  {connectType === `CHROME_EXTENSION`
-                    ? `Terra Station Extension`
-                    : `Terra Station Mobile`}
-                </button>
-              ))}
+            {(() => {
+              const chromeConnectType = availableConnectTypes.find(
+                (connectType) => connectType === `CHROME_EXTENSION`,
+              );
+              if (chromeConnectType) {
+                return (
+                  <button
+                    type="button"
+                    className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                    key={`connect-${chromeConnectType}`}
+                    style={{ maxWidth: `300px` }}
+                    onClick={() => connect(chromeConnectType)}
+                  >
+                    Connect{` `}
+                    {chromeConnectType === `CHROME_EXTENSION`
+                      ? `Terra Station Extension`
+                      : `Terra Station Mobile`}
+                  </button>
+                );
+              }
+              return (
+                <p className="p-4 border-4 border-current max-w-md text-3xl text-center dark:text-white">
+                  Please Install the Terra Station Extension to Continue
+                </p>
+              );
+            })()}
           </>
         )}
         {/* {status === WalletStatus.WALLET_CONNECTED && (
