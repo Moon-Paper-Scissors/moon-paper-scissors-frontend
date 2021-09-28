@@ -6,9 +6,10 @@ import { UserProfile } from '@/types/user_profile';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { LCDClient } from '@terra-money/terra.js';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
+import { NextLayoutComponentType } from 'next';
 import { useEffect, useState } from 'react';
 
-const Leaderboard = () => {
+const Leaderboard: NextLayoutComponentType = () => {
   const connectedWallet = useConnectedWallet();
   const [leaderboard, setLeaderboard] = useState<UserProfile[]>([]);
 
@@ -73,5 +74,6 @@ const Leaderboard = () => {
   );
 };
 
-const LeaderboardWithVerticalNav = () => withVerticalNav(<Leaderboard />);
-export default LeaderboardWithVerticalNav;
+Leaderboard.getLayout = withVerticalNav;
+
+export default Leaderboard;

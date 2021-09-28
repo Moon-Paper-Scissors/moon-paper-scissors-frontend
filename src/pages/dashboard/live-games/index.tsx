@@ -6,9 +6,10 @@ import { QueryMsg } from '@/types/query_msg';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { LCDClient } from '@terra-money/terra.js';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
+import { NextLayoutComponentType } from 'next';
 import { useEffect, useState } from 'react';
 
-const LiveGames = () => {
+const LiveGames: NextLayoutComponentType = () => {
   const connectedWallet = useConnectedWallet();
   const [liveGames, setLiveGames] = useState<GameState[]>([]);
 
@@ -111,5 +112,6 @@ const LiveGames = () => {
   );
 };
 
-const LiveGamesWithVerticalNav = () => withVerticalNav(<LiveGames />);
-export default LiveGamesWithVerticalNav;
+LiveGames.getLayout = withVerticalNav;
+
+export default LiveGames;

@@ -1,6 +1,7 @@
 import { withVerticalNav } from '@/components/VerticalNav';
+import { NextLayoutComponentType } from 'next';
 
-const Profile = () => (
+const Profile: NextLayoutComponentType = () => (
   <div>
     <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl text-center dark:text-white">
       Profile
@@ -8,5 +9,5 @@ const Profile = () => (
   </div>
 );
 
-const ProfileWithNav = () => withVerticalNav(<Profile />);
-export default ProfileWithNav;
+Profile.getLayout = withVerticalNav;
+export default Profile;

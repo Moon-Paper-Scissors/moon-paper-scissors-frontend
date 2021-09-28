@@ -13,6 +13,7 @@ import { GameState } from '@/types/game_state';
 import { WebSocketClient } from '@/utils';
 import { LCDClient } from '@terra-money/terra.js';
 import WebSocket from 'isomorphic-ws';
+import { NextLayoutComponentType } from 'next';
 import { useContext, useEffect, useState } from 'react';
 import { FindingOpponentScreen } from './FindingOpponentScreen';
 import { InitScreen } from './InitScreen';
@@ -26,7 +27,7 @@ interface PlayGame {
   game_over: boolean;
 }
 
-const PlayGame = () => {
+const PlayGame: NextLayoutComponentType = () => {
   // get the user's wallet
   const connectedWallet = useContext(WalletContext);
   const terra = new LCDClient(LCDCClientConfig);
@@ -280,5 +281,6 @@ const PlayGame = () => {
   );
 };
 
-const PlayGameWithNav = () => withVerticalNav(<PlayGame />);
-export default PlayGameWithNav;
+PlayGame.getLayout = withVerticalNav;
+
+export default PlayGame;

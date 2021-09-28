@@ -1,9 +1,10 @@
 import { withVerticalNav } from '@/components/VerticalNav';
 import { useWallet } from '@terra-money/wallet-provider';
+import { NextLayoutComponentType } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-const Disconnect = () => {
+const Disconnect: NextLayoutComponentType = () => {
   const router = useRouter();
   const { disconnect } = useWallet();
 
@@ -21,5 +22,6 @@ const Disconnect = () => {
   );
 };
 
-const DisconnectWithVerticalNav = () => withVerticalNav(<Disconnect />);
-export default DisconnectWithVerticalNav;
+Disconnect.getLayout = withVerticalNav;
+
+export default Disconnect;

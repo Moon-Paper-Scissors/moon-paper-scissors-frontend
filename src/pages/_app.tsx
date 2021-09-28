@@ -6,11 +6,12 @@ import {
   StaticWalletProvider,
   WalletProvider,
 } from '@terra-money/wallet-provider';
+import { NextComponentType } from 'next';
 import { ThemeProvider } from 'next-themes';
-import { AppProps } from 'next/app';
+import { AppInitialProps, AppLayoutProps, AppProps } from 'next/app';
 import Head from 'next/head';
 import Image from 'next/image';
-import { FC, useContext, useState } from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import styled from 'styled-components';
 import 'tailwindcss/tailwind.css';
 import MoonPixelArt from '../../public/images/moon-pixel-art-no-stars.png';
@@ -41,49 +42,6 @@ const meta = {
 
 const Moon = () => {
   const { starMode, setStarMode } = useContext(StarModeContext);
-
-  // Create the keyframes
-  //   const rotate = keyframes`
-  //   from {
-  //     transform: rotate(0deg);
-  //   }
-
-  //   to {
-  //     transform: rotate(360deg);
-  //   }
-  // `;
-
-  // const Rotate = keyframes`
-  //   0% { transform: rotate(0deg); }
-  //   100% { transform: rotate(360deg); }
-  //   `;
-
-  // const RotateStyles = css`
-  //   animation: ${({ starMode }: { starMode: boolean }) =>
-  //     starMode ? `${Rotate} 0.5s linear infinite` : ''};
-  // `;
-
-  // const RotateStyles = css`
-  // `;
-  // const RotateSpan = styled.span`
-  //   animation: ${rotate} 2s linear infinite;
-  // `;
-
-  // const upAndDown = keyframes`
-  // from {
-  //   transform: rotate(0deg);
-  // }
-  // to {
-  //   transform: rotate(359deg);
-  // }
-  //   `;
-  // const RotateSpan = styled.div`
-  //   transform: rotate(0deg);
-  //   overflow: hidden;
-  //   transition: all 3s;
-  //   ${({ rotate }: { rotate: boolean }) =>
-  //     rotate && `transform: rotate(360deg)`};
-  // `;
   const [rotated, setRotated] = useState(false);
 
   return (
@@ -117,13 +75,6 @@ const Moon = () => {
       >
         <Image src={MoonPixelArt} alt="Moon" width={200} height={200} />
       </div>
-      {/* {starMode ? (
-        <RotateSpan>
-          <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
-        </RotateSpan>
-      ) : (
-        <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
-      )} */}
     </button>
   );
 };
@@ -136,7 +87,11 @@ const NoScrollBar = styled.div`
   scrollbar-width: none; /* Firefox */
 `;
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+const App: NextComponentType<AppProps, AppInitialProps, AppLayoutProps> = ({
+  Component,
+  pageProps,
+}: AppLayoutProps) => {
+  const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
   const main = (
     <>
       <Head>
@@ -180,7 +135,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
                 overflow: `scroll`,
               }}
             >
-              <Component {...pageProps} />
+              {getLayout(<Component {...pageProps} />)}
             </NoScrollBar>
 
             {/* <div className="flex flex-1 items-center justify-center">

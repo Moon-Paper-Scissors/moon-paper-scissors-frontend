@@ -1,6 +1,7 @@
 import { withVerticalNav } from '@/components/VerticalNav';
+import { NextLayoutComponentType } from 'next';
 
-const FAQ = () => (
+const FAQ: NextLayoutComponentType = () => (
   <div className="mt-20 max-w-4xl">
     <p className="text-6xl dark:text-white mb-20">FAQ</p>
     <div className="mb-10">
@@ -121,5 +122,6 @@ const FAQ = () => (
   </div>
 );
 
-const FAQWithVerticalNav = () => withVerticalNav(<FAQ />);
-export default FAQWithVerticalNav;
+FAQ.getLayout = withVerticalNav;
+
+export default FAQ;
