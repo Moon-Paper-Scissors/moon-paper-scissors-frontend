@@ -1,4 +1,5 @@
 import Particles from '@/components/ParticleComponent';
+import { StarModeContext, StarModeProvider } from '@/contexts/StarMode';
 import '@/styles/tailwind.css';
 import {
   NetworkInfo,
@@ -9,7 +10,8 @@ import { ThemeProvider } from 'next-themes';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import Image from 'next/image';
-import { FC } from 'react';
+import { FC, useContext, useState } from 'react';
+import styled from 'styled-components';
 import 'tailwindcss/tailwind.css';
 import MoonPixelArt from '../../public/images/moon-pixel-art-no-stars.png';
 
@@ -37,7 +39,103 @@ const meta = {
   image: ``,
 };
 
+const Moon = () => {
+  const { starMode, setStarMode } = useContext(StarModeContext);
+
+  // Create the keyframes
+  //   const rotate = keyframes`
+  //   from {
+  //     transform: rotate(0deg);
+  //   }
+
+  //   to {
+  //     transform: rotate(360deg);
+  //   }
+  // `;
+
+  // const Rotate = keyframes`
+  //   0% { transform: rotate(0deg); }
+  //   100% { transform: rotate(360deg); }
+  //   `;
+
+  // const RotateStyles = css`
+  //   animation: ${({ starMode }: { starMode: boolean }) =>
+  //     starMode ? `${Rotate} 0.5s linear infinite` : ''};
+  // `;
+
+  // const RotateStyles = css`
+  // `;
+  // const RotateSpan = styled.span`
+  //   animation: ${rotate} 2s linear infinite;
+  // `;
+
+  // const upAndDown = keyframes`
+  // from {
+  //   transform: rotate(0deg);
+  // }
+  // to {
+  //   transform: rotate(359deg);
+  // }
+  //   `;
+  // const RotateSpan = styled.div`
+  //   transform: rotate(0deg);
+  //   overflow: hidden;
+  //   transition: all 3s;
+  //   ${({ rotate }: { rotate: boolean }) =>
+  //     rotate && `transform: rotate(360deg)`};
+  // `;
+  const [rotated, setRotated] = useState(false);
+
+  return (
+    <button
+      type="button"
+      style={{
+        position: `fixed`,
+        top: 0,
+        right: 0,
+        transform: `translate(40%, -40%)`,
+        zIndex: 100,
+      }}
+      onClick={() => {
+        console.log(starMode);
+        if (setStarMode) {
+          console.log(`STAR MODE`);
+          setStarMode(true);
+          setRotated(!rotated);
+          setTimeout(() => {
+            setStarMode(false);
+          }, 3000);
+        }
+      }}
+    >
+      <div
+        style={{
+          // animation: starMode ? `${starMode} 2s linear infinite` : '',
+          transform: rotated ? `rotate(360deg)` : `rotate(0deg)`,
+          transition: `transform ${3}s`,
+        }}
+      >
+        <Image src={MoonPixelArt} alt="Moon" width={200} height={200} />
+      </div>
+      {/* {starMode ? (
+        <RotateSpan>
+          <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
+        </RotateSpan>
+      ) : (
+        <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
+      )} */}
+    </button>
+  );
+};
+
 const App: FC<AppProps> = ({ Component, pageProps }) => {
+  const NoScrollBar = styled.div`
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  `;
   const main = (
     <>
       <Head>
@@ -57,44 +155,35 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
         <meta property="twitter:description" content={meta.description} />
         <meta property="twitter:image" content={meta.url + meta.image} />
       </Head>
-      <ThemeProvider enableColorScheme attribute="class">
-        <div
-          className="dark"
-          style={{
-            position: `absolute`,
-            top: 0,
-            left: 0,
-            width: `100%`,
-            height: `100%`,
-          }}
-        >
-          <Particles />
-
+      <StarModeProvider>
+        <ThemeProvider enableColorScheme attribute="class">
           <div
+            className="dark"
             style={{
-              position: `fixed`,
-              top: 0,
-              right: 0,
-              transform: `translate(50%, -40%)`,
-              zIndex: 1,
-            }}
-          >
-            <Image src={MoonPixelArt} alt="Moon" width={377} height={237} />
-          </div>
-          <div
-            className="min-h-screen"
-            style={{
-              zIndex: 10,
               position: `absolute`,
-              width: `100vw`,
-              height: `100vh`,
-              overflow: `scroll`,
+              top: 0,
+              left: 0,
+              width: `100%`,
+              height: `100%`,
             }}
           >
-            <Component {...pageProps} />
-          </div>
+            <Particles />
+            <Moon />
 
-          {/* <div className="flex flex-1 items-center justify-center">
+            <NoScrollBar
+              className="min-h-screen"
+              style={{
+                zIndex: 10,
+                position: `absolute`,
+                width: `100vw`,
+                height: `100vh`,
+                overflow: `scroll`,
+              }}
+            >
+              <Component {...pageProps} />
+            </NoScrollBar>
+
+            {/* <div className="flex flex-1 items-center justify-center">
           </div>
           <div className="my-4">
             <p className="text-xl dark:text-white">
@@ -109,8 +198,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
               </a>
             </p>
           </div> */}
-        </div>
-      </ThemeProvider>
+          </div>
+        </ThemeProvider>
+      </StarModeProvider>
     </>
   );
 
