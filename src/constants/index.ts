@@ -2,7 +2,7 @@
 // export const RPSContractAddress = `terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5`;
 
 // bombay address
-export const RPSContractAddress = `terra1y4352ej0r082m35sen82ec8hry23pha8q42rn6`;
+export const RPSContractAddress = `terra1vqcfld6hqr96p68kl88s34ks7ad6gd6ffyxp6e`;
 
 // // localterra
 // export const LCDCClientConfig = {

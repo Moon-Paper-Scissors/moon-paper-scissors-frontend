@@ -128,14 +128,15 @@ const Moon = () => {
   );
 };
 
+const NoScrollBar = styled.div`
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+`;
+
 const App: FC<AppProps> = ({ Component, pageProps }) => {
-  const NoScrollBar = styled.div`
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  `;
   const main = (
     <>
       <Head>
@@ -171,7 +172,6 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
             <Moon />
 
             <NoScrollBar
-              className="min-h-screen"
               style={{
                 zIndex: 10,
                 position: `absolute`,
