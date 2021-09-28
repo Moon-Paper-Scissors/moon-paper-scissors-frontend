@@ -97,6 +97,7 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
           <div className="mt-10">
             <NavItem link="/dashboard/play-game" text="Play Game" />
             <NavItem link="/dashboard/leaderboard" text="Leaderboard" />
+            <NavItem link="/dashboard/live-games" text="Live Games" />
             <NavItem link="/dashboard/faq" text="FAQ" />
             {/* <NavItem link="/dashboard/profile" text="Your Profile" /> */}
             <NavItem link="/dashboard/disconnect" text="Disconnect" />
