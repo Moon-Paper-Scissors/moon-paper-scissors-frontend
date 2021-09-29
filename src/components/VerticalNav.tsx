@@ -3,9 +3,11 @@ import { WalletContext } from '@/contexts/Wallet';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { LCDClient } from '@terra-money/terra.js';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
+import ExternalLinkIcon from '../../public/images/external-link.png';
 
 const NavItem = ({ link, text }: { link: string; text: string }) => {
   const router = useRouter();
@@ -102,6 +104,30 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
             <NavItem link="/dashboard/leaderboard" text="Leaderboard" />
             <NavItem link="/dashboard/live-games" text="Live Games" />
             <NavItem link="/dashboard/faq" text="FAQ" />
+
+            <div>
+              <a
+                href="https://forms.gle/EGMcGr3p6FQ3s4ng6"
+                target="_blank"
+                className="text-3xl"
+                style={{
+                  color: `white`,
+                  display: `flex`,
+                  alignItems: `center`,
+                }}
+                rel="noreferrer"
+              >
+                Feedback Form
+                <div style={{ marginLeft: `10px` }}>
+                  <Image
+                    src={ExternalLinkIcon}
+                    alt="External Link"
+                    height="16px"
+                    width="16px"
+                  />
+                </div>
+              </a>
+            </div>
             {/* <NavItem link="/dashboard/profile" text="Your Profile" /> */}
             <NavItem link="/dashboard/disconnect" text="Disconnect" />
           </div>
