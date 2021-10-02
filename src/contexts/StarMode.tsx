@@ -12,7 +12,7 @@ interface StarModeProviderProps {
 export const StarModeContext = React.createContext<ContextProps>({
   starMode: false,
   setStarMode: () => {
-    console.log(`not defined yet`);
+    console.error(`Setting star mode without initial params`);
   },
 });
 

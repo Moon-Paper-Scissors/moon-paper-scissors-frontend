@@ -17,7 +17,6 @@ const Intro = () => {
   } = useWallet();
 
   useEffect(() => {
-    console.log(status);
     if (status === WalletStatus.WALLET_CONNECTED) {
       router.push(`/dashboard/play-game`);
     }

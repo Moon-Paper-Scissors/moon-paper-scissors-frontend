@@ -2,36 +2,19 @@ import Particles from '@/components/ParticleComponent';
 import { StarModeContext, StarModeProvider } from '@/contexts/StarMode';
 import '@/styles/tailwind.css';
 import {
-  NetworkInfo,
+  getChainOptions,
   StaticWalletProvider,
+  WalletControllerChainOptions,
   WalletProvider,
 } from '@terra-money/wallet-provider';
-import { NextComponentType } from 'next';
 import { ThemeProvider } from 'next-themes';
-import { AppInitialProps, AppLayoutProps, AppProps } from 'next/app';
+import { AppLayoutProps } from 'next/app';
 import Head from 'next/head';
 import Image from 'next/image';
 import { ReactNode, useContext, useState } from 'react';
 import styled from 'styled-components';
 import 'tailwindcss/tailwind.css';
 import MoonPixelArt from '../../public/images/moon-pixel-art-no-stars.png';
-
-const mainnet = {
-  name: `mainnet`,
-  chainID: `columbus-5`,
-  lcd: `https://lcd.terra.dev`,
-};
-
-const testnet = {
-  name: `testnet`,
-  chainID: `bombay-12`,
-  lcd: `https://bombay-lcd.terra.dev`,
-};
-
-const walletConnectChainIds: Record<number, NetworkInfo> = {
-  0: testnet,
-  // 1: mainnet,
-};
 
 const meta = {
   title: `Moon Paper Scissors, on Terra`,
@@ -55,9 +38,7 @@ const Moon = () => {
         zIndex: 100,
       }}
       onClick={() => {
-        console.log(starMode);
         if (setStarMode) {
-          console.log(`STAR MODE`);
           setStarMode(true);
           setRotated(!rotated);
           setTimeout(() => {
@@ -87,10 +68,12 @@ const NoScrollBar = styled.div`
   scrollbar-width: none; /* Firefox */
 `;
 
-const App: NextComponentType<AppProps, AppInitialProps, AppLayoutProps> = ({
+const App = ({
   Component,
   pageProps,
-}: AppLayoutProps) => {
+  defaultNetwork,
+  walletConnectChainIds,
+}: AppLayoutProps & WalletControllerChainOptions) => {
   const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
   const main = (
     <>
@@ -145,14 +128,23 @@ const App: NextComponentType<AppProps, AppInitialProps, AppLayoutProps> = ({
 
   return typeof window !== `undefined` ? (
     <WalletProvider
-      defaultNetwork={testnet}
+      defaultNetwork={defaultNetwork}
       walletConnectChainIds={walletConnectChainIds}
     >
       {main}
     </WalletProvider>
   ) : (
-    <StaticWalletProvider defaultNetwork={testnet}>{main}</StaticWalletProvider>
+    <StaticWalletProvider defaultNetwork={defaultNetwork}>
+      {main}
+    </StaticWalletProvider>
   );
+};
+
+App.getInitialProps = async () => {
+  const chainOptions = await getChainOptions();
+  return {
+    ...chainOptions,
+  };
 };
 
 export default App;

@@ -139,7 +139,9 @@ const PlayGame: NextLayoutComponentType = () => {
       const connectObserver = () => {
         const ws = new WebSocket(`wss://observer.terra.dev`);
         ws.onopen = function () {
-          console.log(`Connected to websocket. Subscribing...`);
+          console.info(
+            `Connected to websocket. Listening for new block events...`,
+          );
           // subscribe to new_block events
           ws.send(
             JSON.stringify({ subscribe: `new_block`, chain_id: `bombay-12` }),
@@ -164,8 +166,6 @@ const PlayGame: NextLayoutComponentType = () => {
               );
 
               if (rpsExecuteEvent) {
-                // console.log(txn);
-
                 if (
                   rpsExecuteEvent.attributes.some(
                     (attr: any) =>
@@ -203,13 +203,12 @@ const PlayGame: NextLayoutComponentType = () => {
             },
             [],
           );
-          console.log(rpsTransactions);
           for (let i = 0; i < rpsTransactions.length; i += 1) {
             handleResponse(rpsTransactions[i]);
           }
         };
         // ws.onclose = function (e) {
-        //   console.log('websocket closed. reopening...');
+        //   console.info('websocket closed. reopening...');
         //   setTimeout(function () {
         //     connectObserver();
         //   }, 1000);
@@ -222,11 +221,10 @@ const PlayGame: NextLayoutComponentType = () => {
       };
     }
     const wsclient = new WebSocketClient(WebsocketAddress);
-    console.log(`Setting up subscription!`);
     // send tracker
 
     wsclient.on(`open`, () => {
-      console.log(`CONNECTION OPENED!`);
+      console.info(`Websocket connection opened.`);
     });
     wsclient.subscribe(
       `Tx`,
@@ -241,8 +239,6 @@ const PlayGame: NextLayoutComponentType = () => {
             acc[atob(attr.key)] = atob(attr.value);
             return acc;
           }, {});
-        console.log(`Event received!`);
-        console.log(res);
         handleResponse(res);
       },
     );

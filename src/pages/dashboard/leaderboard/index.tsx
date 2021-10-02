@@ -17,7 +17,6 @@ const Leaderboard: NextLayoutComponentType = () => {
 
   const updateLeaderboard = async () => {
     if (connectedWallet) {
-      console.log(`UPDATING LEADERBOARD`);
       // get the leaderboard
       const query_msg: QueryMsg = {
         get_leaderboard: {},
@@ -32,7 +31,7 @@ const Leaderboard: NextLayoutComponentType = () => {
 
       setLeaderboard(res.leaderboard);
     } else {
-      console.log(`Wallet not connected!`);
+      console.info(`Wallet not connected!`);
     }
   };
 

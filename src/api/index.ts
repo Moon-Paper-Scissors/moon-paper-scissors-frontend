@@ -4,12 +4,8 @@ import { GameState } from '@/types/game_state';
 import { GetGameByPlayerResponse } from '@/types/get_game_by_player_response';
 import { GetOpenGamesResponse } from '@/types/get_open_games_response';
 import { QueryMsg } from '@/types/query_msg';
-import {
-  Coin,
-  LCDClient,
-  MsgExecuteContract,
-  StdFee,
-} from '@terra-money/terra.js';
+import { debugTransaction } from '@/utils';
+import { LCDClient, MsgExecuteContract } from '@terra-money/terra.js';
 import { ConnectedWallet } from '@terra-money/wallet-provider';
 import sha256 from 'crypto-js/sha256';
 
@@ -61,7 +57,7 @@ export default class RPSApi {
 
     // sent the transaction to request to join a game
     const result = await this.connectedWallet.post({
-      fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -71,6 +67,7 @@ export default class RPSApi {
         ),
       ],
     });
+    debugTransaction(result);
     return result;
   };
 
@@ -82,7 +79,7 @@ export default class RPSApi {
 
     // sent the transaction to request to join a game
     const result = await this.connectedWallet.post({
-      fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -91,6 +88,7 @@ export default class RPSApi {
         ),
       ],
     });
+    debugTransaction(result);
     return result;
   };
 
@@ -102,7 +100,7 @@ export default class RPSApi {
 
     // sent the transaction to try to claim the game
     const result = await this.connectedWallet.post({
-      fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -111,6 +109,7 @@ export default class RPSApi {
         ),
       ],
     });
+    debugTransaction(result);
     return result;
   };
 
@@ -122,7 +121,7 @@ export default class RPSApi {
 
     // sent the transaction to request to join a game
     const result = await this.connectedWallet.post({
-      fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -132,6 +131,7 @@ export default class RPSApi {
       ],
     });
 
+    debugTransaction(result);
     return result;
   };
 
@@ -153,7 +153,7 @@ export default class RPSApi {
 
     // Send the transaction to upsert the game
     const result = await this.connectedWallet.post({
-      fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -163,6 +163,7 @@ export default class RPSApi {
       ],
     });
 
+    debugTransaction(result);
     return result;
   };
 
@@ -183,7 +184,7 @@ export default class RPSApi {
 
     // Send the transaction to upsert the game
     const result = await this.connectedWallet.post({
-      fee: new StdFee(30000000, [new Coin(`uusd`, 4500000)]),
+      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -193,6 +194,7 @@ export default class RPSApi {
       ],
     });
 
+    debugTransaction(result);
     return result;
   };
 }

@@ -17,7 +17,6 @@ const LiveGames: NextLayoutComponentType = () => {
 
   const updateLiveGames = async () => {
     if (connectedWallet) {
-      console.log(`UPDATING LEADERBOARD`);
       // get the liveGames
       const query_msg: QueryMsg = {
         get_games: {},
@@ -32,7 +31,7 @@ const LiveGames: NextLayoutComponentType = () => {
 
       setLiveGames(res.games);
     } else {
-      console.log(`Wallet not connected!`);
+      console.info(`Wallet not connected!`);
     }
   };
 
@@ -47,7 +46,7 @@ const LiveGames: NextLayoutComponentType = () => {
   }, [connectedWallet]);
   return (
     <div className="mt-20">
-      <p className="text-6xl dark:text-white mb-20">LiveGames</p>
+      <p className="text-6xl dark:text-white mb-20">Live Games</p>
       <div className="flex justify-around items-center h-20">
         <span className="dark:text-white text-3xl text-center flex-1">
           Player 1

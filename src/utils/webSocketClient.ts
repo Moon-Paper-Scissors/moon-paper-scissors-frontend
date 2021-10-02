@@ -110,7 +110,7 @@ function makeQueryParams(query: TendermintQuery): string {
  * const wsclient = new WebSocketClient("ws://localhost:26657/websocket");
  *
  * wsclient.subscribe('NewBlock', {}, (data) => {
- *    console.log(data.value);
+ *    console.info(data.value);
  *
  *    // close after receiving one block.
  *    wsclient.destroy();
@@ -123,7 +123,7 @@ function makeQueryParams(query: TendermintQuery): string {
  *    'message.sender': ['CONTAINS', 'terra1...'],
  *  },
  *  (data) => {
- *    console.log(data.value);
+ *    console.info(data.value);
  *
  *   // close after receiving one send Tx
  *   wsclient.destroy();

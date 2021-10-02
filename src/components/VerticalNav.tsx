@@ -92,7 +92,11 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
                     {formatAddressShort(connectedWallet.walletAddress)}
                   </p>
                   <p className="max-w-xs md:max-w-prose text-xl dark:text-white">
-                    {balance}
+                    {`${balance}`}
+                  </p>
+
+                  <p className="max-w-xs md:max-w-prose text-xl dark:text-white">
+                    {`${connectedWallet.network.chainID}`}
                   </p>
                 </div>
               </>
