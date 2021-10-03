@@ -159,8 +159,8 @@ const PlayGame: NextLayoutComponentType = () => {
           const data = JSON.parse(message.data.toString());
           const rpsTransactions = data.data.txs.reduce(
             (acc: any[], txn: any) => {
-              if (!txn.logs) return false;
-              if (txn.logs.length === 0) return false;
+              if (!txn.logs) return acc;
+              if (txn.logs.length === 0) return acc;
 
               const rpsExecuteEvent = txn.logs[0].events.find(
                 (tmpEvent: any) =>
