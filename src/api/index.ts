@@ -57,7 +57,6 @@ export default class RPSApi {
 
     // sent the transaction to request to join a game
     const result = await this.connectedWallet.post({
-      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -67,6 +66,7 @@ export default class RPSApi {
         ),
       ],
     });
+
     debugTransaction(result);
     return result;
   };
@@ -79,7 +79,6 @@ export default class RPSApi {
 
     // sent the transaction to request to join a game
     const result = await this.connectedWallet.post({
-      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -100,7 +99,6 @@ export default class RPSApi {
 
     // sent the transaction to try to claim the game
     const result = await this.connectedWallet.post({
-      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -121,7 +119,6 @@ export default class RPSApi {
 
     // sent the transaction to request to join a game
     const result = await this.connectedWallet.post({
-      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -153,7 +150,6 @@ export default class RPSApi {
 
     // Send the transaction to upsert the game
     const result = await this.connectedWallet.post({
-      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
@@ -184,7 +180,6 @@ export default class RPSApi {
 
     // Send the transaction to upsert the game
     const result = await this.connectedWallet.post({
-      gasAdjustment: `1.4`,
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,

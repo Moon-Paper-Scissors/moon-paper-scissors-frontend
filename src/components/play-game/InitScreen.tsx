@@ -17,11 +17,6 @@ export const InitScreen = ({
     setLoading(true);
   };
 
-  const leaveWaitingQueue = async () => {
-    await rpsApi.leaveWaitingQueue();
-    setLoading(true);
-  };
-
   useEffect(() => {
     rpsApi.fetchOpenGames().then((res) => setOpenGames(res.open_games));
 
