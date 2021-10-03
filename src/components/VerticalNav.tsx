@@ -1,4 +1,4 @@
-import { LCDCClientConfig } from '@/constants';
+import { getLCDCClientConfig } from '@/constants';
 import { WalletContext } from '@/contexts/Wallet';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { LCDClient } from '@terra-money/terra.js';
@@ -34,7 +34,9 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   const router = useRouter();
   // const WalletContext = React.createContext<ConnectedWallet>(undefined!);
 
-  const terra = new LCDClient(LCDCClientConfig);
+  const terra = new LCDClient(
+    getLCDCClientConfig(connectedWallet?.network.name ?? `columbus-5`),
+  );
 
   const updateBalance = () => {
     if (connectedWallet) {

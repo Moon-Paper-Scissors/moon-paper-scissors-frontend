@@ -1,19 +1,21 @@
 import { withVerticalNav } from '@/components/VerticalNav';
-import { LCDCClientConfig, RPSContractAddress } from '@/constants';
+import { getContractAddress, getLCDCClientConfig } from '@/constants';
+import { WalletContext } from '@/contexts/Wallet';
 import { GetLeaderboardResponse } from '@/types/get_leaderboard_response';
 import { QueryMsg } from '@/types/query_msg';
 import { UserProfile } from '@/types/user_profile';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { LCDClient } from '@terra-money/terra.js';
-import { useConnectedWallet } from '@terra-money/wallet-provider';
 import { NextLayoutComponentType } from 'next';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 const Leaderboard: NextLayoutComponentType = () => {
-  const connectedWallet = useConnectedWallet();
+  const connectedWallet = useContext(WalletContext);
   const [leaderboard, setLeaderboard] = useState<UserProfile[]>([]);
 
-  const terra = new LCDClient(LCDCClientConfig);
+  const terra = new LCDClient(
+    getLCDCClientConfig(connectedWallet.network.name),
+  );
 
   const updateLeaderboard = async () => {
     if (connectedWallet) {
@@ -23,7 +25,7 @@ const Leaderboard: NextLayoutComponentType = () => {
       };
 
       const res = (await terra.wasm.contractQuery(
-        RPSContractAddress,
+        getContractAddress(connectedWallet.network.name),
         query_msg,
       )) as GetLeaderboardResponse;
 

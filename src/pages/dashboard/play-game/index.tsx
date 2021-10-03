@@ -6,8 +6,8 @@ import { PlayingScreen } from '@/components/play-game/PlayingScreen';
 import { withVerticalNav } from '@/components/VerticalNav';
 import {
   environment,
-  LCDCClientConfig,
-  RPSContractAddress,
+  getContractAddress,
+  getLCDCClientConfig,
   WebsocketAddress,
 } from '@/constants';
 import { WalletContext } from '@/contexts/Wallet';
@@ -30,8 +30,11 @@ interface PlayGame {
 const PlayGame: NextLayoutComponentType = () => {
   // get the user's wallet
   const connectedWallet = useContext(WalletContext);
-  const terra = new LCDClient(LCDCClientConfig);
+  const terra = new LCDClient(
+    getLCDCClientConfig(connectedWallet.network.name),
+  );
   const rpsApi = new RPSApi(connectedWallet);
+  const RPSContractAddress = getContractAddress(connectedWallet.network.name);
 
   // start at Init screen state
   const [screenState, setScreenState] = useState<ScreenState>(`Init`);
@@ -135,7 +138,7 @@ const PlayGame: NextLayoutComponentType = () => {
   useEffect(() => {
     updateGameState();
 
-    if (environment === `bombay`) {
+    if (environment === `live`) {
       const connectObserver = () => {
         const ws = new WebSocket(`wss://observer.terra.dev`);
         ws.onopen = function () {
@@ -144,7 +147,10 @@ const PlayGame: NextLayoutComponentType = () => {
           );
           // subscribe to new_block events
           ws.send(
-            JSON.stringify({ subscribe: `new_block`, chain_id: `bombay-12` }),
+            JSON.stringify({
+              subscribe: `new_block`,
+              chain_id: connectedWallet.network.chainID,
+            }),
           );
         };
         ws.onmessage = function (message) {

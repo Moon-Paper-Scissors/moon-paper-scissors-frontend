@@ -1,4 +1,4 @@
-import { LCDCClientConfig, RPSContractAddress } from '@/constants';
+import { getContractAddress, getLCDCClientConfig } from '@/constants';
 import { ExecuteMsg, GameMove } from '@/types/execute_msg';
 import { GameState } from '@/types/game_state';
 import { GetGameByPlayerResponse } from '@/types/get_game_by_player_response';
@@ -14,9 +14,14 @@ export default class RPSApi {
 
   terra: LCDClient;
 
+  contractAddress: string;
+
   constructor(connectedWallet: ConnectedWallet) {
     this.connectedWallet = connectedWallet;
-    this.terra = new LCDClient(LCDCClientConfig);
+    this.terra = new LCDClient(
+      getLCDCClientConfig(connectedWallet.network.name),
+    );
+    this.contractAddress = getContractAddress(connectedWallet.network.name);
   }
 
   // get requests
@@ -27,7 +32,7 @@ export default class RPSApi {
       get_open_games: {},
     };
     const res = (await this.terra.wasm.contractQuery(
-      RPSContractAddress,
+      this.contractAddress,
       query_msg,
     )) as GetOpenGamesResponse;
     return res;
@@ -41,7 +46,7 @@ export default class RPSApi {
       },
     };
     const res = (await this.terra.wasm.contractQuery(
-      RPSContractAddress,
+      this.contractAddress,
       query_msg,
     )) as GetGameByPlayerResponse;
     return res;
@@ -60,7 +65,7 @@ export default class RPSApi {
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
-          RPSContractAddress,
+          this.contractAddress,
           joinGameMessage,
           { uluna: betAmount },
         ),
@@ -82,7 +87,7 @@ export default class RPSApi {
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
-          RPSContractAddress,
+          this.contractAddress,
           leaveWaitingQueueMessage,
         ),
       ],
@@ -102,7 +107,7 @@ export default class RPSApi {
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
-          RPSContractAddress,
+          this.contractAddress,
           claimGameMessage,
         ),
       ],
@@ -122,7 +127,7 @@ export default class RPSApi {
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
-          RPSContractAddress,
+          this.contractAddress,
           forfeitMessage,
         ),
       ],
@@ -153,7 +158,7 @@ export default class RPSApi {
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
-          RPSContractAddress,
+          this.contractAddress,
           commitMoveMessage,
         ),
       ],
@@ -183,7 +188,7 @@ export default class RPSApi {
       msgs: [
         new MsgExecuteContract(
           this.connectedWallet.walletAddress,
-          RPSContractAddress,
+          this.contractAddress,
           revealMoveMessage,
         ),
       ],
