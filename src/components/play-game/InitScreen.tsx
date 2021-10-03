@@ -13,8 +13,16 @@ export const InitScreen = ({
   const [openGames, setOpenGames] = useState<UnmatchedPlayer[] | null>(null);
 
   const joinGame = async (betAmount: string) => {
-    await rpsApi.joinGame(betAmount);
-    setLoading(true);
+    try {
+      await rpsApi.joinGame(betAmount);
+      setLoading(true);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert(`Unknown error. Please file bug report.`);
+      }
+    }
   };
 
   useEffect(() => {

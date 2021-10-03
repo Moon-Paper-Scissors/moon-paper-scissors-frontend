@@ -41,16 +41,33 @@ export const PlayingScreen = ({
   const [nonce, setNonce] = useLocalStorage(`nonce`, ``);
 
   const claimGame = async () => {
-    await rpsApi.claimGame(gameState);
-    setLoading(true);
+    try {
+      await rpsApi.claimGame(gameState);
+      setLoading(true);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert(`Unknown error. Please file bug report.`);
+      }
+    }
   };
 
   const commitMove = async (newGameMove: GameMove) => {
     const newNonce = (Math.random() + 1).toString(36).substring(7);
-    await rpsApi.commitMove(gameState, newGameMove, newNonce);
-    setLoading(true);
-    setGameMove(newGameMove);
-    setNonce(newNonce);
+
+    try {
+      await rpsApi.commitMove(gameState, newGameMove, newNonce);
+      setLoading(true);
+      setGameMove(newGameMove);
+      setNonce(newNonce);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert(`Unknown error. Please file bug report.`);
+      }
+    }
   };
 
   const revealMove = async () => {
@@ -58,9 +75,18 @@ export const PlayingScreen = ({
       alert(`Can't reveal move :( Did you change browsers?`);
       return;
     }
-    await rpsApi.revealMove(gameState, gameMove, nonce);
 
-    setLoading(true);
+    try {
+      await rpsApi.revealMove(gameState, gameMove, nonce);
+
+      setLoading(true);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert(`Unknown error. Please file bug report.`);
+      }
+    }
   };
 
   const gameStatus = useMemo(

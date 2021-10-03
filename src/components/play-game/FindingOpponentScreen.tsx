@@ -11,8 +11,16 @@ export const FindingOpponentScreen = ({
   const dots = useDotDotDot();
 
   const leaveWaitingQueue = async () => {
-    await rpsApi.leaveWaitingQueue();
-    setLoading(true);
+    try {
+      await rpsApi.leaveWaitingQueue();
+      setLoading(true);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert(`Unknown error. Please file bug report.`);
+      }
+    }
   };
 
   return (
