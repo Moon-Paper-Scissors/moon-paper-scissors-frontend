@@ -37,44 +37,6 @@ export const InitScreen = ({
 
   return (
     <>
-      <p className="text-3xl dark:text-white mt-20">
-        Battle A Stranger (first to win a game)
-      </p>
-
-      <div className="max-w-4xl flex items-center justify-between mt-10">
-        {[`100000`, `1000000`, `5000000`].map((betAmount) => (
-          <button
-            type="button"
-            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-            key={`${betAmount}`}
-            onClick={() => joinGame(betAmount, 1)}
-          >
-            Bet Amount:
-            <br />
-            {`${parseInt(betAmount, 10) / 1000000} luna`}
-          </button>
-        ))}
-      </div>
-
-      <p className="text-3xl dark:text-white mt-20">
-        Battle A Stranger (first to win 2 games)
-      </p>
-
-      <div className="max-w-4xl flex items-center justify-between mt-10">
-        {[`100000`, `1000000`, `5000000`].map((betAmount) => (
-          <button
-            type="button"
-            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-            key={`${betAmount}`}
-            onClick={() => joinGame(betAmount, 2)}
-          >
-            Bet Amount:
-            <br />
-            {`${parseInt(betAmount, 10) / 1000000} luna`}
-          </button>
-        ))}
-      </div>
-
       <p className="text-3xl dark:text-white mt-20">Join A Game</p>
 
       <div className="">
@@ -140,6 +102,43 @@ export const InitScreen = ({
             </p>
           </div>
         )}
+      </div>
+      <p className="text-3xl dark:text-white mt-20">
+        Battle A Stranger (first to win a game)
+      </p>
+
+      <div className="max-w-4xl flex items-center justify-between mt-10">
+        {[`100000`, `1000000`, `5000000`].map((betAmount) => (
+          <button
+            type="button"
+            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+            key={`${betAmount}`}
+            onClick={() => joinGame(betAmount, 1)}
+          >
+            Bet Amount:
+            <br />
+            {`${parseInt(betAmount, 10) / 1000000} luna`}
+          </button>
+        ))}
+      </div>
+
+      <p className="text-3xl dark:text-white mt-20">
+        Battle A Stranger (first to win 2 games)
+      </p>
+
+      <div className="max-w-4xl flex items-center justify-between mt-10">
+        {[`100000`, `1000000`, `5000000`].map((betAmount) => (
+          <button
+            type="button"
+            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+            key={`${betAmount}`}
+            onClick={() => joinGame(betAmount, 2)}
+          >
+            Bet Amount:
+            <br />
+            {`${parseInt(betAmount, 10) / 1000000} luna`}
+          </button>
+        ))}
       </div>
     </>
   );

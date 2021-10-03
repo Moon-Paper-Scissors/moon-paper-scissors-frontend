@@ -255,7 +255,7 @@ const PlayGame: NextLayoutComponentType = () => {
   }, []);
 
   return (
-    <div className="mt-20">
+    <div>
       <p className="text-6xl dark:text-white mb-10">
         {screenState === `In Game` ? `Playing Game` : `Play Game`}
       </p>

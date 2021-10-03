@@ -50,7 +50,7 @@ const Moon = () => {
       <div
         style={{
           // animation: starMode ? `${starMode} 2s linear infinite` : '',
-          transform: rotated ? `rotate(360deg)` : `rotate(0deg)`,
+          transform: rotated ? `rotate(720deg)` : `rotate(0deg)`,
           transition: `transform ${3}s`,
         }}
       >

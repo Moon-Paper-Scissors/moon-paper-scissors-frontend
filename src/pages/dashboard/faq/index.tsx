@@ -2,7 +2,7 @@ import { withVerticalNav } from '@/components/VerticalNav';
 import { NextLayoutComponentType } from 'next';
 
 const FAQ: NextLayoutComponentType = () => (
-  <div className="mt-20 max-w-4xl">
+  <div className="max-w-4xl">
     <p className="text-6xl dark:text-white mb-20">FAQ</p>
     <div className="mb-10">
       <p className="text-5xl dark:text-white mb-10">Overview</p>

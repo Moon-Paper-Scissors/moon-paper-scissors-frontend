@@ -41,7 +41,7 @@ const Leaderboard: NextLayoutComponentType = () => {
     updateLeaderboard();
   }, [connectedWallet]);
   return (
-    <div className="mt-20">
+    <div>
       <p className="text-6xl dark:text-white mb-20">Leaderboard</p>
       <div className="flex justify-around items-center h-20">
         <span className="dark:text-white text-3xl text-center flex-1">

@@ -154,7 +154,7 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
       </div>
       <div
         style={{
-          padding: `50px`,
+          padding: `40px 50px`,
           // width: `100%`,
           marginLeft: `300px`,
           zIndex: 20,
