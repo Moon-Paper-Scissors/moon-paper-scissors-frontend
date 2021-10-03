@@ -4,7 +4,7 @@
 // bombay address
 export const TestRPSContractAddress = `terra1f5u6ds3q95jwl2y5ellsczuwd2349g68u8af4l`;
 // mainnet address
-export const MainRPSContractAddress = `terra1f5u6ds3q95jwl2y5ellsczuwd2349g68u8af4l`;
+export const MainRPSContractAddress = `terra1yhnn0zxydfs8rls2eydfrqmaweh2emt4gsmx3u`;
 
 export const getContractAddress = (networkName: string) =>
   networkName === `mainnet` ? MainRPSContractAddress : TestRPSContractAddress;

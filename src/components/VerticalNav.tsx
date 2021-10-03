@@ -97,9 +97,9 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
                     {`${balance}`}
                   </p>
 
-                  <p className="max-w-xs md:max-w-prose text-xl dark:text-white">
+                  {/* <p className="max-w-xs md:max-w-prose text-xl dark:text-white">
                     {`${connectedWallet.network.chainID}`}
-                  </p>
+                  </p> */}
                 </div>
               </>
             )}
