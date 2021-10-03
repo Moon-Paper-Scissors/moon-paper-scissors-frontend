@@ -21,16 +21,22 @@ export type QueryMsg =
     }
   | {
       get_leaderboard: {
+        limit?: number | null;
+        start_after?: number | null;
         [k: string]: unknown;
       };
     }
   | {
       get_open_games: {
+        limit?: number | null;
+        start_after?: number | null;
         [k: string]: unknown;
       };
     }
   | {
       get_games: {
+        limit?: number | null;
+        start_after?: number | null;
         [k: string]: unknown;
       };
     }

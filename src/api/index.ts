@@ -49,10 +49,10 @@ export default class RPSApi {
 
   // post requests
 
-  joinGame = async (betAmount: string) => {
+  joinGame = async (betAmount: string, num_hands_to_win: number) => {
     // try to join a game
     const joinGameMessage: ExecuteMsg = {
-      join_game: {},
+      join_game: { num_hands_to_win },
     };
 
     // sent the transaction to request to join a game

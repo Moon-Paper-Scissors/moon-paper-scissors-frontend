@@ -37,6 +37,7 @@ export interface GetOpenGamesResponse {
 export interface UnmatchedPlayer {
   address: Addr;
   bet_amount: Coin[];
+  num_hands_to_win: number;
   [k: string]: unknown;
 }
 export interface Coin {

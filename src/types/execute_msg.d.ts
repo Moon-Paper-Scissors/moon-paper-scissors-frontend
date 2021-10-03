@@ -8,6 +8,7 @@
 export type ExecuteMsg =
   | {
       join_game: {
+        num_hands_to_win: number;
         [k: string]: unknown;
       };
     }

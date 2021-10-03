@@ -104,10 +104,11 @@ const FAQ: NextLayoutComponentType = () => (
     <div className="mb-10">
       <p className="text-5xl dark:text-white mb-10">Where Is The Code?!</p>
       <p className="text-3xl dark:text-white">
-        Frontend Code:
+        The code will be published soon, but is still under going audits.
+        {/* Frontend Code:
         <br />
         <br />
-        Backend Code:
+        Backend Code: */}
       </p>
     </div>
 

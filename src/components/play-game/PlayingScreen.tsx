@@ -1,4 +1,5 @@
 import RPSApi from '@/api';
+import { useCountDown } from '@/hooks/useCountDown';
 import { useDotDotDot } from '@/hooks/useDotDotDot';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { GameMove } from '@/types/execute_msg';
@@ -9,7 +10,7 @@ import {
   getOpponentNumber,
   getPlayerNumber,
 } from '@/utils';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { GameScreen } from './GameScreen';
 
 interface PlayGame {
@@ -33,6 +34,7 @@ export const PlayingScreen = ({
   setPlayGame: any;
   setLoading: any;
 }) => {
+  const dots = useDotDotDot();
   // when playing
   const [gameMove, setGameMove] = useLocalStorage<GameMove | null>(
     `gameMove`,
@@ -95,28 +97,7 @@ export const PlayingScreen = ({
   );
 
   const WaitingForOpponentToMove = () => {
-    const dots = useDotDotDot();
-    const [countDown, setCountDown] = useState<number | null>(null);
-
-    // set timer so that button for claiming game is shown after 10 seconds
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        setCountDown(40);
-      }, 20000);
-      return () => {
-        clearTimeout(timeout);
-      };
-    }, []);
-
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        if (countDown && countDown > 0) {
-          setCountDown(countDown - 1);
-        }
-      }, 1000);
-
-      return () => clearTimeout(timeout);
-    }, [countDown]);
+    const countDown = useCountDown(20, 40);
 
     return (
       <>
@@ -144,27 +125,7 @@ export const PlayingScreen = ({
   };
 
   const WaitingForOpponentToReveal = () => {
-    const dots = useDotDotDot();
-    const [countDown, setCountDown] = useState<number | null>(null);
-
-    // set timer so that button for claiming game is shown after 10 seconds
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        setCountDown(40);
-      }, 20000);
-
-      return () => clearTimeout(timeout);
-    }, []);
-
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        if (countDown && countDown > 0) {
-          setCountDown(countDown - 1);
-        }
-      }, 1000);
-
-      return () => clearTimeout(timeout);
-    }, [countDown]);
+    const countDown = useCountDown(20, 40);
 
     return (
       <>
@@ -190,115 +151,129 @@ export const PlayingScreen = ({
       </>
     );
   };
-  return (
+
+  if (playGame)
+    return (
+      <GameScreen
+        gameState={gameState}
+        rpsApi={rpsApi}
+        setScreenState={setScreenState}
+        playGame={playGame}
+        setPlayGame={setPlayGame}
+      />
+    );
+
+  const GameInfo = () => (
     <div>
-      {playGame === null ? (
-        <>
+      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
+        Opponent:{` `}
+        {formatAddressShort(
+          gameState[
+            getOpponentNumber(gameState, rpsApi.connectedWallet.walletAddress)
+          ],
+        )}
+      </p>
+      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
+        Bet Amount:{` `}
+        {gameState &&
+          gameState.bet_amount
+            .map(
+              (coin) =>
+                `${parseInt(coin.amount, 10) / 1000000} ${coin.denom.slice(
+                  1,
+                )}, `,
+            )
+            .join(``)
+            .slice(0, -2)}
+      </p>
+      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
+        Hands Won:{` `}
+        {
+          gameState[
+            `${getPlayerNumber(
+              gameState,
+              rpsApi.connectedWallet.walletAddress,
+            )}_hands_won`
+          ]
+        }
+      </p>
+
+      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
+        Ties: {gameState.hands_tied}
+      </p>
+      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
+        Hands Lost:{` `}
+        {
+          gameState[
+            `${getOpponentNumber(
+              gameState,
+              rpsApi.connectedWallet.walletAddress,
+            )}_hands_won`
+          ]
+        }
+      </p>
+
+      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
+        Game Status: {gameStatus}
+      </p>
+    </div>
+  );
+
+  const YourMove = () => {
+    const countDown = useCountDown(20, 40);
+    return (
+      <div>
+        <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+          Your Move
+        </p>
+
+        <div className="max-w-2xl flex items-center justify-between mt-10">
+          {[
+            [`Moon`, `Rock`],
+            [`Paper`, `Paper`],
+            [`Scissors`, `Scissors`],
+          ].map(([name, move]) => (
+            <button
+              type="button"
+              className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+              key={`${move}`}
+              onClick={() => commitMove(move as GameMove)}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+
+        {countDown != null && (
           <div>
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
-              Opponent:{` `}
-              {formatAddressShort(
-                gameState[
-                  getOpponentNumber(
-                    gameState,
-                    rpsApi.connectedWallet.walletAddress,
-                  )
-                ],
-              )}
-            </p>
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
-              Bet Amount:{` `}
-              {gameState &&
-                gameState.bet_amount
-                  .map(
-                    (coin) =>
-                      `${
-                        parseInt(coin.amount, 10) / 1000000
-                      } ${coin.denom.slice(1)}, `,
-                  )
-                  .join(``)
-                  .slice(0, -2)}
-            </p>
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
-              Hands Won:{` `}
-              {
-                gameState[
-                  `${getPlayerNumber(
-                    gameState,
-                    rpsApi.connectedWallet.walletAddress,
-                  )}_hands_won`
-                ]
-              }
-            </p>
-
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
-              Ties: {gameState.hands_tied}
-            </p>
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
-              Hands Lost:{` `}
-              {
-                gameState[
-                  `${getOpponentNumber(
-                    gameState,
-                    rpsApi.connectedWallet.walletAddress,
-                  )}_hands_won`
-                ]
-              }
-            </p>
-
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
-              Game Status: {gameStatus}
+            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white mt-10">
+              {`Your opponent can claim the game if you don't move in the next ${countDown} seconds!`}
             </p>
           </div>
-          <div className="mt-10">
-            {(() => {
-              if (gameStatus === `Your Move`) {
-                return (
-                  <div>
-                    <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
-                      Your Move
-                    </p>
+        )}
+      </div>
+    );
+  };
 
-                    <div className="max-w-2xl flex items-center justify-between mt-10">
-                      {[
-                        [`Moon`, `Rock`],
-                        [`Paper`, `Paper`],
-                        [`Scissors`, `Scissors`],
-                      ].map(([name, move]) => (
-                        <button
-                          type="button"
-                          className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-                          key={`${move}`}
-                          onClick={() => commitMove(move as GameMove)}
-                        >
-                          {name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                );
-              }
-              if (gameStatus === `Waiting for opponent to move`) {
-                return <WaitingForOpponentToMove />;
-              }
-              if (gameStatus === `Your Turn to Reveal`) {
-                return (
-                  <div className="max-w-lg flex items-center justify-between mt-10">
-                    <div>
-                      <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
-                        Reveal
-                      </p>
+  const YourReveal = () => {
+    const countDown = useCountDown(20, 40);
+    return (
+      <div className="max-w-lg flex items-center justify-between mt-10">
+        <div>
+          <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
+            Reveal
+          </p>
 
-                      <button
-                        type="button"
-                        className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-                        onClick={() => revealMove()}
-                      >
-                        Reveal Move
-                      </button>
-                    </div>
+          <button
+            type="button"
+            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+            onClick={() => revealMove()}
+          >
+            Reveal Move
+          </button>
+        </div>
 
-                    {/* <div>
+        {/* <div>
                       <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
                         Forfeit
                       </p>
@@ -311,29 +286,44 @@ export const PlayingScreen = ({
                         Forfeit
                       </button>
                     </div> */}
-                  </div>
-                );
-              }
-              if (gameStatus === `Waiting for opponent to reveal`) {
-                return <WaitingForOpponentToReveal />;
-              }
-              return (
-                <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white">
-                  {gameStatus}
-                </p>
-              );
-            })()}
+
+        {countDown != null && (
+          <div>
+            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white mt-10">
+              {`Your opponent can claim the game if you don't reveal in the next ${countDown} seconds!`}
+            </p>
           </div>
-        </>
-      ) : (
-        <GameScreen
-          gameState={gameState}
-          rpsApi={rpsApi}
-          setScreenState={setScreenState}
-          playGame={playGame}
-          setPlayGame={setPlayGame}
-        />
-      )}
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      <>
+        <GameInfo />
+        <div className="mt-10">
+          {(() => {
+            if (gameStatus === `Your Move`) {
+              return <YourMove />;
+            }
+            if (gameStatus === `Waiting for opponent to move`) {
+              return <WaitingForOpponentToMove />;
+            }
+            if (gameStatus === `Your Turn to Reveal`) {
+              return <YourReveal />;
+            }
+            if (gameStatus === `Waiting for opponent to reveal`) {
+              return <WaitingForOpponentToReveal />;
+            }
+            return (
+              <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl dark:text-white">
+                {gameStatus}
+              </p>
+            );
+          })()}
+        </div>
+      </>
     </div>
   );
 };

@@ -12,9 +12,9 @@ export const InitScreen = ({
 }) => {
   const [openGames, setOpenGames] = useState<UnmatchedPlayer[] | null>(null);
 
-  const joinGame = async (betAmount: string) => {
+  const joinGame = async (betAmount: string, num_hands_to_win: number) => {
     try {
-      await rpsApi.joinGame(betAmount);
+      await rpsApi.joinGame(betAmount, num_hands_to_win);
       setLoading(true);
     } catch (e) {
       if (e instanceof Error) {
@@ -38,7 +38,7 @@ export const InitScreen = ({
   return (
     <>
       <p className="text-3xl dark:text-white mt-20">
-        Battle A Stranger (first to win 2 games)
+        Battle A Stranger (first to win a game)
       </p>
 
       <div className="max-w-4xl flex items-center justify-between mt-10">
@@ -47,7 +47,7 @@ export const InitScreen = ({
             type="button"
             className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
             key={`${betAmount}`}
-            onClick={() => joinGame(betAmount)}
+            onClick={() => joinGame(betAmount, 1)}
           >
             Bet Amount:
             <br />
@@ -57,13 +57,33 @@ export const InitScreen = ({
       </div>
 
       <p className="text-3xl dark:text-white mt-20">
-        Join A Game (first to win 2 games)
+        Battle A Stranger (first to win 2 games)
       </p>
+
+      <div className="max-w-4xl flex items-center justify-between mt-10">
+        {[`100000`, `1000000`, `5000000`].map((betAmount) => (
+          <button
+            type="button"
+            className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+            key={`${betAmount}`}
+            onClick={() => joinGame(betAmount, 2)}
+          >
+            Bet Amount:
+            <br />
+            {`${parseInt(betAmount, 10) / 1000000} luna`}
+          </button>
+        ))}
+      </div>
+
+      <p className="text-3xl dark:text-white mt-20">Join A Game</p>
 
       <div className="">
         <div className="flex justify-around items-center h-20">
           <span className="dark:text-white text-3xl text-center flex-1">
             Opponent
+          </span>
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Num Hands To Win
           </span>
           <span className="dark:text-white text-3xl text-center flex-1">
             Bet Amount
@@ -83,6 +103,9 @@ export const InitScreen = ({
                 {formatAddressShort(openGame.address)}
               </span>
               <span className="dark:text-white text-3xl text-center flex-1">
+                {openGame.num_hands_to_win}
+              </span>
+              <span className="dark:text-white text-3xl text-center flex-1">
                 {openGame.bet_amount
                   .map(
                     (coin) =>
@@ -98,7 +121,12 @@ export const InitScreen = ({
                 <button
                   type="button"
                   className="text-3xl py-1 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-                  onClick={() => joinGame(openGame.bet_amount[0].amount)}
+                  onClick={() =>
+                    joinGame(
+                      openGame.bet_amount[0].amount,
+                      openGame.num_hands_to_win,
+                    )
+                  }
                 >
                   Join Game
                 </button>
