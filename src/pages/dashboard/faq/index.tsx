@@ -102,6 +102,14 @@ const FAQ: NextLayoutComponentType = () => (
     </div>
 
     <div className="mb-10">
+      <p className="text-5xl dark:text-white mb-10">How Can I Donate?</p>
+      <p className="text-3xl dark:text-white">
+        You can donate by sending money to
+        terra1vpqrv3gh3dujyveq4tzc6c00wqp056q5jupxe6 :)
+      </p>
+    </div>
+
+    <div className="mb-10">
       <p className="text-5xl dark:text-white mb-10">Where Is The Code?!</p>
       <p className="text-3xl dark:text-white">
         The code will be published soon, but is still under going audits.
@@ -114,7 +122,7 @@ const FAQ: NextLayoutComponentType = () => (
 
     <div className="mb-10">
       <p className="text-5xl dark:text-white mb-10">
-        Has The Smart Contract Been Audited Yet?
+        Has The Smart Contract Been Audited?
       </p>
       <p className="text-3xl dark:text-white">
         No the smart contract has not been audited yet, use at your own risk! ;)
