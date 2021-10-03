@@ -68,6 +68,7 @@ const PlayGame: NextLayoutComponentType = () => {
   };
 
   const handleResponse = (res: any) => {
+    console.info(`Handling game event`);
     if (res.action === `join_game`) {
       // join_game message
       if (res.opponent_found === `false`) {
