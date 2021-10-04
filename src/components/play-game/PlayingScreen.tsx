@@ -271,6 +271,14 @@ export const PlayingScreen = ({
             Reveal
           </p>
 
+          {countDown != null && (
+            <div>
+              <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white mt-10">
+                {`Your opponent can claim the game if you don't reveal in the next ${countDown} seconds!`}
+              </p>
+            </div>
+          )}
+
           <button
             type="button"
             className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
@@ -293,14 +301,6 @@ export const PlayingScreen = ({
                         Forfeit
                       </button>
                     </div> */}
-
-        {countDown != null && (
-          <div>
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white mt-10">
-              {`Your opponent can claim the game if you don't reveal in the next ${countDown} seconds!`}
-            </p>
-          </div>
-        )}
       </div>
     );
   };
