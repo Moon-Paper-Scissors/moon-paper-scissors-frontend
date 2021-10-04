@@ -5,13 +5,7 @@ export const useDotDotDot = () => {
 
   useEffect(() => {
     const interval = setTimeout(() => {
-      if (dots === `...`) {
-        setDots(`.`);
-      } else if (dots === `.`) {
-        setDots(`..`);
-      } else if (dots === `..`) {
-        setDots(`...`);
-      }
+      setDots(`.`.repeat((dots.length % 3) + 1));
     }, 500);
 
     return () => {

@@ -1,3 +1,4 @@
+import { NoScrollBar } from '@/components/NoScrollBar';
 import { withVerticalNav } from '@/components/VerticalNav';
 import { getContractAddress, getLCDCClientConfig } from '@/constants';
 import { WalletContext } from '@/contexts/Wallet';
@@ -47,69 +48,71 @@ const LiveGames: NextLayoutComponentType = () => {
     return () => clearInterval(interval);
   }, [connectedWallet]);
   return (
-    <div>
-      <p className="text-6xl dark:text-white mb-20">Live Games</p>
-      <div className="flex justify-around items-center h-20">
-        <span className="dark:text-white text-3xl text-center flex-1">
-          Player 1
-        </span>
-        <span className="dark:text-white text-3xl text-center flex-1">
-          Player 2
-        </span>
-        <span className="dark:text-white text-3xl text-center flex-1">
-          Player 1 Wins
-        </span>
-
-        <span className="dark:text-white text-3xl text-center flex-1">
-          Player 2 Wins
-        </span>
-
-        <span className="dark:text-white text-3xl text-center flex-1">
-          Bet Amount
-        </span>
-      </div>
-      <hr style={{ borderTop: `4px solid white` }} />
-
-      {liveGames && liveGames.length > 0 ? (
-        liveGames.map((gameState) => (
-          <div
-            key={gameState.player1}
-            className="flex justify-around items-center h-20"
-          >
-            <span className="dark:text-white text-3xl text-center flex-1">
-              {formatAddressShort(gameState.player1)}
-            </span>
-
-            <span className="dark:text-white text-3xl text-center flex-1">
-              {formatAddressShort(gameState.player2)}
-            </span>
-            <span className="dark:text-white text-3xl text-center flex-1">
-              {gameState.player1_hands_won}
-            </span>
-            <span className="dark:text-white text-3xl text-center flex-1">
-              {gameState.player2_hands_won}
-            </span>
-            <span className="dark:text-white text-3xl text-center flex-1">
-              {gameState.bet_amount
-                .map(
-                  (coin) =>
-                    `${parseInt(coin.amount, 10) / 1000000} ${coin.denom.slice(
-                      1,
-                    )}, `,
-                )
-                .join(``)
-                .slice(0, -2)}
-            </span>
-          </div>
-        ))
-      ) : (
+    <NoScrollBar style={{ overflow: `scroll` }}>
+      <div style={{ minWidth: `700px` }}>
+        <p className="text-6xl dark:text-white mb-20">Live Games</p>
         <div className="flex justify-around items-center h-20">
-          <p className="dark:text-white text-3xl text-center flex-1">
-            No Live Games
-          </p>
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Player 1
+          </span>
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Player 2
+          </span>
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Player 1 Wins
+          </span>
+
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Player 2 Wins
+          </span>
+
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Bet Amount
+          </span>
         </div>
-      )}
-    </div>
+        <hr style={{ borderTop: `4px solid white` }} />
+
+        {liveGames && liveGames.length > 0 ? (
+          liveGames.map((gameState) => (
+            <div
+              key={gameState.player1}
+              className="flex justify-around items-center h-20"
+            >
+              <span className="dark:text-white text-3xl text-center flex-1">
+                {formatAddressShort(gameState.player1)}
+              </span>
+
+              <span className="dark:text-white text-3xl text-center flex-1">
+                {formatAddressShort(gameState.player2)}
+              </span>
+              <span className="dark:text-white text-3xl text-center flex-1">
+                {gameState.player1_hands_won}
+              </span>
+              <span className="dark:text-white text-3xl text-center flex-1">
+                {gameState.player2_hands_won}
+              </span>
+              <span className="dark:text-white text-3xl text-center flex-1">
+                {gameState.bet_amount
+                  .map(
+                    (coin) =>
+                      `${
+                        parseInt(coin.amount, 10) / 1000000
+                      } ${coin.denom.slice(1)}, `,
+                  )
+                  .join(``)
+                  .slice(0, -2)}
+              </span>
+            </div>
+          ))
+        ) : (
+          <div className="flex justify-around items-center h-20">
+            <p className="dark:text-white text-3xl text-center flex-1">
+              No Live Games
+            </p>
+          </div>
+        )}
+      </div>
+    </NoScrollBar>
   );
 };
 

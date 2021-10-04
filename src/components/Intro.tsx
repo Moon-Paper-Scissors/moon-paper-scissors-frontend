@@ -1,9 +1,11 @@
+import ConnectWallet from '@/components/ConnectWallet';
 import { useWallet, WalletStatus } from '@terra-money/wallet-provider';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const Intro = () => {
   const router = useRouter();
+  const [connectingWallet, setConnectingWallet] = useState(false);
 
   const {
     status,
@@ -31,50 +33,19 @@ const Intro = () => {
         Do you have what it takes to fight your way through the galaxy? Claim
         victory or die trying. May the best lunatic win :)
       </p>
-      <div
-        className="flex items-center justify-evenly"
-        style={{ width: `700px` }}
+      <button
+        type="button"
+        className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+        style={{ maxWidth: `300px` }}
+        onClick={() => {
+          setConnectingWallet(true);
+        }}
       >
-        {status === WalletStatus.WALLET_NOT_CONNECTED && (
-          <>
-            {(() => {
-              const chromeConnectType = availableConnectTypes.find(
-                (connectType) => connectType === `CHROME_EXTENSION`,
-              );
-              if (chromeConnectType) {
-                return (
-                  <button
-                    type="button"
-                    className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-                    key={`connect-${chromeConnectType}`}
-                    style={{ maxWidth: `300px` }}
-                    onClick={() => connect(chromeConnectType)}
-                  >
-                    Connect{` `}
-                    {chromeConnectType === `CHROME_EXTENSION`
-                      ? `Terra Station Extension`
-                      : `Terra Station Mobile`}
-                  </button>
-                );
-              }
-              return (
-                <p className="p-4 border-4 border-current max-w-md text-3xl text-center dark:text-white">
-                  Please Install the Terra Station Extension to Continue
-                </p>
-              );
-            })()}
-          </>
-        )}
-        {/* {status === WalletStatus.WALLET_CONNECTED && (
-          <button
-            type="button"
-            className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
-            onClick={() => disconnect()}
-          >
-            Disconnect
-          </button>
-        )} */}
-      </div>
+        Connect Wallet
+      </button>
+      {connectingWallet && (
+        <ConnectWallet setConnectingWallet={setConnectingWallet} />
+      )}
     </div>
   );
 };

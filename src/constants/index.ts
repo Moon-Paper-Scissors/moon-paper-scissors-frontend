@@ -2,7 +2,8 @@
 // export const RPSContractAddress = `terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5`;
 
 // bombay address
-export const TestRPSContractAddress = `terra1f5u6ds3q95jwl2y5ellsczuwd2349g68u8af4l`;
+export const TestRPSContractAddress = `terra1p458kpzze8pu3fg6v9p70klmkmyuq3xpkzgaw2`;
+
 // mainnet address
 export const MainRPSContractAddress = `terra1yhnn0zxydfs8rls2eydfrqmaweh2emt4gsmx3u`;
 
@@ -37,3 +38,5 @@ export const WebsocketAddress = `ws://localhost:26657/websocket`;
 // - live
 // - local
 export const environment = `live`;
+
+export const mobileMaxWidth = `800px`;

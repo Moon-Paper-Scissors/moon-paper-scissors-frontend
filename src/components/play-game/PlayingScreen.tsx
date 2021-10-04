@@ -1,4 +1,5 @@
 import RPSApi from '@/api';
+import { mobileMaxWidth } from '@/constants';
 import { useCountDown } from '@/hooks/useCountDown';
 import { useDotDotDot } from '@/hooks/useDotDotDot';
 import useLocalStorage from '@/hooks/useLocalStorage';
@@ -11,6 +12,7 @@ import {
   getPlayerNumber,
 } from '@/utils';
 import { useMemo } from 'react';
+import { useMedia } from 'use-media';
 import { GameScreen } from './GameScreen';
 
 interface PlayGame {
@@ -34,7 +36,7 @@ export const PlayingScreen = ({
   setPlayGame: any;
   setLoading: any;
 }) => {
-  const dots = useDotDotDot();
+  const isMobile = useMedia({ maxWidth: mobileMaxWidth });
   // when playing
   const [gameMove, setGameMove] = useLocalStorage<GameMove | null>(
     `gameMove`,
@@ -98,6 +100,7 @@ export const PlayingScreen = ({
 
   const WaitingForOpponentToMove = () => {
     const countDown = useCountDown(20, 40);
+    const dots = useDotDotDot();
 
     return (
       <>
@@ -126,6 +129,7 @@ export const PlayingScreen = ({
 
   const WaitingForOpponentToReveal = () => {
     const countDown = useCountDown(20, 40);
+    const dots = useDotDotDot();
 
     return (
       <>
@@ -227,7 +231,18 @@ export const PlayingScreen = ({
           Your Move
         </p>
 
-        <div className="max-w-2xl flex items-center justify-between mt-10">
+        {countDown != null && (
+          <div>
+            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white mt-10">
+              {`Your opponent can claim the game if you don't move in the next ${countDown} seconds!`}
+            </p>
+          </div>
+        )}
+
+        <div
+          className="max-w-2xl flex items-center justify-between mt-10"
+          style={{ flexDirection: isMobile ? `column` : `row` }}
+        >
           {[
             [`Moon`, `Rock`],
             [`Paper`, `Paper`],
@@ -243,14 +258,6 @@ export const PlayingScreen = ({
             </button>
           ))}
         </div>
-
-        {countDown != null && (
-          <div>
-            <p className="max-w-xs md:max-w-prose text-2xl md:text-3xl  dark:text-white mt-10">
-              {`Your opponent can claim the game if you don't move in the next ${countDown} seconds!`}
-            </p>
-          </div>
-        )}
       </div>
     );
   };

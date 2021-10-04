@@ -1,3 +1,4 @@
+import { NoScrollBar } from '@/components/NoScrollBar';
 import { withVerticalNav } from '@/components/VerticalNav';
 import { getContractAddress, getLCDCClientConfig } from '@/constants';
 import { WalletContext } from '@/contexts/Wallet';
@@ -41,37 +42,39 @@ const Leaderboard: NextLayoutComponentType = () => {
     updateLeaderboard();
   }, [connectedWallet]);
   return (
-    <div>
-      <p className="text-6xl dark:text-white mb-20">Leaderboard</p>
-      <div className="flex justify-around items-center h-20">
-        <span className="dark:text-white text-3xl text-center flex-1">
-          Player
-        </span>
-        <span className="dark:text-white text-3xl text-center flex-1">
-          Games Won
-        </span>
-        <span className="dark:text-white text-3xl text-center flex-1">
-          Winnings (luna)
-        </span>
+    <NoScrollBar style={{ overflow: `scroll` }}>
+      <div style={{ minWidth: `700px` }}>
+        <p className="text-6xl dark:text-white mb-20">Leaderboard</p>
+        <div className="flex justify-around items-center h-20">
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Player
+          </span>
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Games Won
+          </span>
+          <span className="dark:text-white text-3xl text-center flex-1">
+            Winnings (luna)
+          </span>
+        </div>
+        <hr style={{ borderTop: `4px solid white` }} />
+        {leaderboard
+          .sort((a, b) => (a.winnings < b.winnings ? 1 : -1))
+          .map((userProfile) => (
+            <div
+              key={userProfile.address}
+              className="flex justify-around items-center h-20"
+            >
+              <span className="dark:text-white text-3xl text-center flex-1">
+                {formatAddressShort(userProfile.address)}
+              </span>
+              <span className="dark:text-white text-3xl text-center flex-1">{`${userProfile.num_games_won} / ${userProfile.num_games_played}`}</span>
+              <span className="dark:text-white text-3xl text-center flex-1">
+                {userProfile.winnings / 1000000}
+              </span>
+            </div>
+          ))}
       </div>
-      <hr style={{ borderTop: `4px solid white` }} />
-      {leaderboard
-        .sort((a, b) => (a.winnings < b.winnings ? 1 : -1))
-        .map((userProfile) => (
-          <div
-            key={userProfile.address}
-            className="flex justify-around items-center h-20"
-          >
-            <span className="dark:text-white text-3xl text-center flex-1">
-              {formatAddressShort(userProfile.address)}
-            </span>
-            <span className="dark:text-white text-3xl text-center flex-1">{`${userProfile.num_games_won} / ${userProfile.num_games_played}`}</span>
-            <span className="dark:text-white text-3xl text-center flex-1">
-              {userProfile.winnings / 1000000}
-            </span>
-          </div>
-        ))}
-    </div>
+    </NoScrollBar>
   );
 };
 

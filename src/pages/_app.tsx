@@ -1,3 +1,4 @@
+import { NoScrollBar } from '@/components/NoScrollBar';
 import Particles from '@/components/ParticleComponent';
 import { StarModeContext, StarModeProvider } from '@/contexts/StarMode';
 import '@/styles/tailwind.css';
@@ -12,7 +13,6 @@ import { AppLayoutProps } from 'next/app';
 import Head from 'next/head';
 import Image from 'next/image';
 import { ReactNode, useContext, useState } from 'react';
-import styled from 'styled-components';
 import 'tailwindcss/tailwind.css';
 import MoonPixelArt from '../../public/images/moon-pixel-art-no-stars.png';
 
@@ -30,6 +30,7 @@ const Moon = () => {
   return (
     <button
       type="button"
+      className="invisible md:visible"
       style={{
         position: `fixed`,
         top: 0,
@@ -59,14 +60,6 @@ const Moon = () => {
     </button>
   );
 };
-
-const NoScrollBar = styled.div`
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-`;
 
 const App = ({
   Component,
@@ -140,6 +133,12 @@ const App = ({
   );
 };
 
+// export async function getStaticProps() {
+//   const chainOptions = await getChainOptions();
+//   return {
+//     props: { ...chainOptions },
+//   };
+// }
 App.getInitialProps = async () => {
   const chainOptions = await getChainOptions();
   return {
