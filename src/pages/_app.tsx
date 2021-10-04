@@ -1,11 +1,10 @@
 import { NoScrollBar } from '@/components/NoScrollBar';
 import Particles from '@/components/ParticleComponent';
+import { defaultNetwork, walletConnectChainIds } from '@/constants';
 import { StarModeContext, StarModeProvider } from '@/contexts/StarMode';
 import '@/styles/tailwind.css';
 import {
-  getChainOptions,
   StaticWalletProvider,
-  WalletControllerChainOptions,
   WalletProvider,
 } from '@terra-money/wallet-provider';
 import { ThemeProvider } from 'next-themes';
@@ -61,12 +60,7 @@ const Moon = () => {
   );
 };
 
-const App = ({
-  Component,
-  pageProps,
-  defaultNetwork,
-  walletConnectChainIds,
-}: AppLayoutProps & WalletControllerChainOptions) => {
+const App = ({ Component, pageProps }: AppLayoutProps) => {
   const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
   const main = (
     <>
@@ -139,11 +133,11 @@ const App = ({
 //     props: { ...chainOptions },
 //   };
 // }
-App.getInitialProps = async () => {
-  const chainOptions = await getChainOptions();
-  return {
-    ...chainOptions,
-  };
-};
+// App.getInitialProps = async () => {
+//   const chainOptions = await getChainOptions();
+//   return {
+//     ...chainOptions,
+//   };
+// };
 
 export default App;

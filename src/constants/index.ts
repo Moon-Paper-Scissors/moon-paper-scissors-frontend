@@ -40,3 +40,24 @@ export const WebsocketAddress = `ws://localhost:26657/websocket`;
 export const environment = `live`;
 
 export const mobileMaxWidth = `800px`;
+
+export const defaultNetwork = {
+  name: `mainnet`,
+  chainID: `columbus-5`,
+  lcd: `https://lcd.terra.dev`,
+  walletconnectID: 1,
+};
+export const walletConnectChainIds = {
+  '0': {
+    name: `testnet`,
+    chainID: `bombay-12`,
+    lcd: `https://bombay-lcd.terra.dev`,
+    walletconnectID: 0,
+  },
+  '1': {
+    name: `mainnet`,
+    chainID: `columbus-5`,
+    lcd: `https://lcd.terra.dev`,
+    walletconnectID: 1,
+  },
+};
