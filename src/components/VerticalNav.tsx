@@ -10,6 +10,7 @@ import { useMedia } from 'use-media';
 import CloseButton from '../../public/images/close.svg';
 import ExternalLinkIcon from '../../public/images/external-link.png';
 import HamburgerMenu from '../../public/images/hamburger.svg';
+import ConnectWallet from './ConnectWallet';
 
 const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   const [balance, setBalance] = useState(``);
@@ -17,6 +18,8 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
   const router = useRouter();
   const isMobile = useMedia({ maxWidth: mobileMaxWidth });
   const [showMobileNav, setShowMobileNav] = useState(false);
+
+  const [connectingWallet, setConnectingWallet] = useState(false);
   // const WalletContext = React.createContext<ConnectedWallet>(undefined!);
 
   const NavItem = ({ link, text }: { link: string; text: string }) => (
@@ -243,6 +246,17 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
               <button
                 type="button"
                 className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
+                style={{ maxWidth: `300px` }}
+                onClick={() => {
+                  setConnectingWallet(true);
+                }}
+              >
+                Connect Wallet
+              </button>
+
+              <button
+                type="button"
+                className="ml-8 text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400"
                 onClick={() => router.push(`/`)}
               >
                 Return Home
@@ -251,6 +265,9 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
           </>
         )}
       </div>
+      {connectingWallet && (
+        <ConnectWallet setConnectingWallet={setConnectingWallet} />
+      )}
     </>
   );
 };
