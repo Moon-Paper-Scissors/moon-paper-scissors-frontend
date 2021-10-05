@@ -190,7 +190,7 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
 
           <div>
             <a
-              href="https://twitter.com/MoonPaperScisso"
+              href="https://twitter.com/Terra_MPS"
               target="_blank"
               className="text-3xl"
               style={{
