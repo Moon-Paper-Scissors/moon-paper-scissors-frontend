@@ -55,8 +55,9 @@ const ConnectWallet = ({
           </button>
         </div>
         {availableConnectTypes
-          .filter((connectType) =>
-            [`CHROME_EXTENSION`, `WALLETCONNECT`].includes(connectType),
+          .filter(
+            (connectType) => [`CHROME_EXTENSION`].includes(connectType),
+            // , `WALLETCONNECT`
           )
           .map((connectType) => (
             <button
