@@ -163,6 +163,54 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
               </div>
             </a>
           </div>
+
+          <div>
+            <a
+              href="https://discord.gg/uvHWtTkX"
+              target="_blank"
+              className="text-3xl"
+              style={{
+                color: `white`,
+                display: `flex`,
+                alignItems: `center`,
+              }}
+              rel="noreferrer"
+            >
+              Discord
+              <div style={{ marginLeft: `10px` }}>
+                <Image
+                  src={ExternalLinkIcon}
+                  alt="External Link"
+                  height="16px"
+                  width="16px"
+                />
+              </div>
+            </a>
+          </div>
+
+          <div>
+            <a
+              href="https://twitter.com/MoonPaperScisso"
+              target="_blank"
+              className="text-3xl"
+              style={{
+                color: `white`,
+                display: `flex`,
+                alignItems: `center`,
+              }}
+              rel="noreferrer"
+            >
+              Twitter
+              <div style={{ marginLeft: `10px` }}>
+                <Image
+                  src={ExternalLinkIcon}
+                  alt="External Link"
+                  height="16px"
+                  width="16px"
+                />
+              </div>
+            </a>
+          </div>
           {/* <NavItem link="/dashboard/profile" text="Your Profile" /> */}
           <NavItem link="/dashboard/disconnect" text="Disconnect" />
         </div>
