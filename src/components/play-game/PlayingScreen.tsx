@@ -11,7 +11,7 @@ import {
   getOpponentNumber,
   getPlayerNumber,
 } from '@/utils';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useMedia } from 'use-media';
 import { GameScreen } from './GameScreen';
 
@@ -43,6 +43,7 @@ export const PlayingScreen = ({
     null,
   );
   const [nonce, setNonce] = useLocalStorage(`nonce`, ``);
+  const [gameOverMessage, setGameOverMessage] = useState<string | null>();
 
   const claimGame = async () => {
     try {
@@ -156,6 +157,24 @@ export const PlayingScreen = ({
     );
   };
 
+  if (gameOverMessage) {
+    return (
+      <>
+        <p className="text-6xl text-center dark:text-white">
+          {`${gameOverMessage}`}
+        </p>
+
+        <button
+          type="button"
+          className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 mt-10"
+          onClick={() => setScreenState(`Init`)}
+        >
+          Play Again
+        </button>
+      </>
+    );
+  }
+
   if (playGame)
     return (
       <GameScreen
@@ -164,6 +183,7 @@ export const PlayingScreen = ({
         setScreenState={setScreenState}
         playGame={playGame}
         setPlayGame={setPlayGame}
+        setGameOverMessage={setGameOverMessage}
       />
     );
 

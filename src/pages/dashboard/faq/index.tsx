@@ -43,6 +43,16 @@ const FAQ: NextLayoutComponentType = () => (
     </div>
 
     <div className="mb-10">
+      <p className="text-5xl dark:text-white mb-10">
+        How expensive are the fees?
+      </p>
+      <p className="text-3xl dark:text-white">
+        The gas fees are between 20 cents and 1 dollar per game. There is no
+        royalty fee.
+      </p>
+    </div>
+
+    <div className="mb-10">
       <p className="text-5xl dark:text-white mb-10">How Do I Play?</p>
       <p className="text-3xl dark:text-white">
         The process for "Moon, Paper, Scissors" is a bit different from

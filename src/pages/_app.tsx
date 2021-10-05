@@ -117,6 +117,7 @@ const App = ({ Component, pageProps }: AppLayoutProps) => {
     <WalletProvider
       defaultNetwork={defaultNetwork}
       walletConnectChainIds={walletConnectChainIds}
+      connectorOpts={{ bridge: `https://walletconnect.terra.dev/` }}
     >
       {main}
     </WalletProvider>

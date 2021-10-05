@@ -21,15 +21,16 @@ export const GameScreen = ({
   setScreenState,
   playGame,
   setPlayGame,
+  setGameOverMessage,
 }: {
   gameState: GameState;
   rpsApi: RPSApi;
   setScreenState: any;
   playGame: PlayGame;
   setPlayGame: any;
+  setGameOverMessage: any;
 }) => {
   const [showResult, setShowResult] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     const resultTimeout = setTimeout(() => {
@@ -38,7 +39,8 @@ export const GameScreen = ({
 
     const returnTimeout = setTimeout(() => {
       if (playGame?.game_over) {
-        setGameOver(true);
+        setGameOverMessage(getMessage());
+        setPlayGame(null);
       } else {
         setPlayGame(null);
       }
@@ -128,24 +130,6 @@ export const GameScreen = ({
 
   if (playGame === null) {
     return <p>Error</p>;
-  }
-
-  if (gameOver) {
-    return (
-      <>
-        <p className="text-6xl text-center dark:text-white">
-          {`${getMessage()}`}
-        </p>
-
-        <button
-          type="button"
-          className="text-3xl py-8 px-12 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 mt-10"
-          onClick={() => setScreenState(`Init`)}
-        >
-          Play Again
-        </button>
-      </>
-    );
   }
 
   return (
