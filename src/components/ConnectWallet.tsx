@@ -57,24 +57,24 @@ const ConnectWallet = ({
 
         <>
           {(() => {
-            const chromeConnectType = availableConnectTypes.find(
-              (connectType) => connectType === `CHROME_EXTENSION`,
+            const connectTypes = availableConnectTypes.filter((connectType) =>
+              [`CHROME_EXTENSION`].includes(connectType),
             );
-            if (chromeConnectType) {
-              return (
+            if (connectTypes.length > 0) {
+              return connectTypes.map((connectType) => (
                 <button
                   type="button"
                   className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 mt-10"
-                  key={`connect-${chromeConnectType}`}
+                  key={`connect-${connectType}`}
                   style={{ maxWidth: `300px` }}
-                  onClick={() => connect(chromeConnectType)}
+                  onClick={() => connect(connectType)}
                 >
                   Connect{` `}
-                  {chromeConnectType === `CHROME_EXTENSION`
+                  {connectType === `CHROME_EXTENSION`
                     ? `Terra Station Extension`
                     : `Terra Station Mobile`}
                 </button>
-              );
+              ));
             }
             return (
               <p className="p-4 border-4 border-current max-w-md text-3xl text-center dark:text-white mt-10">
@@ -87,6 +87,19 @@ const ConnectWallet = ({
     </div>
   );
 };
+
+// <button
+//   type="button"
+//   className="text-3xl p-4 border-4 border-current text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 mt-10"
+//   key={`connect-${chromeConnectType}`}
+//   style={{ maxWidth: `300px` }}
+//   onClick={() => connect(chromeConnectType)}
+// >
+//   Connect{` `}
+//   {chromeConnectType === `CHROME_EXTENSION`
+//     ? `Terra Station Extension`
+//     : `Terra Station Mobile`}
+// </button>
 
 export default ConnectWallet;
 
