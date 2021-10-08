@@ -44,7 +44,10 @@ const Leaderboard: NextLayoutComponentType = () => {
   return (
     <NoScrollBar style={{ overflow: `scroll` }}>
       <div style={{ minWidth: `700px` }}>
-        <p className="text-6xl dark:text-white mb-20">Leaderboard</p>
+        <p className="text-6xl dark:text-white">Leaderboard</p>
+        <p className="text-3xl dark:text-white mb-20">
+          Top 10 Players by Winnings
+        </p>
         <div className="flex justify-around items-center h-20">
           <span className="dark:text-white text-3xl text-center flex-1">
             Player
