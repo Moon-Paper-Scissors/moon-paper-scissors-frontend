@@ -5,10 +5,13 @@
 export const TestRPSContractAddress = `terra1p458kpzze8pu3fg6v9p70klmkmyuq3xpkzgaw2`;
 
 // mainnet address
-// v1
+// v1 leaderboard broken
 // export const MainRPSContractAddress = `terra1yhnn0zxydfs8rls2eydfrqmaweh2emt4gsmx3u`;
-// v2
-export const MainRPSContractAddress = `terra19hfed92vghhacrlnrxcx6fzwmrqcd4hp4kgr7t`;
+// v2 leaderboard still broken
+// export const MainRPSContractAddress = `terra19hfed92vghhacrlnrxcx6fzwmrqcd4hp4kgr7t`;
+
+// v3 leaderboard fixed
+export const MainRPSContractAddress = `terra12aykqwd6sx09s37qpppq93pnqsyrcynnptq29s`;
 
 export const getContractAddress = (networkName: string) =>
   networkName === `mainnet` ? MainRPSContractAddress : TestRPSContractAddress;
