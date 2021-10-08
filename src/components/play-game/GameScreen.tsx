@@ -171,8 +171,26 @@ export const GameScreen = ({
               bottom: `80px`,
             }}
           >
-            <LeftMove gameMove={playGame.player1_move} />
-            <RightMove gameMove={playGame.player2_move} />
+            <LeftMove
+              gameMove={
+                playGame[
+                  `${getPlayerNumber(
+                    gameState,
+                    rpsApi.connectedWallet.walletAddress,
+                  )}_move` as 'player1_move' | 'player2_move'
+                ]
+              }
+            />
+            <RightMove
+              gameMove={
+                playGame[
+                  `${getOpponentNumber(
+                    gameState,
+                    rpsApi.connectedWallet.walletAddress,
+                  )}_move` as 'player1_move' | 'player2_move'
+                ]
+              }
+            />
           </div>
         </>
       )}
