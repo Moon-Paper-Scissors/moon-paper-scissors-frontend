@@ -5,7 +5,10 @@
 export const TestRPSContractAddress = `terra1p458kpzze8pu3fg6v9p70klmkmyuq3xpkzgaw2`;
 
 // mainnet address
-export const MainRPSContractAddress = `terra1yhnn0zxydfs8rls2eydfrqmaweh2emt4gsmx3u`;
+// v1
+// export const MainRPSContractAddress = `terra1yhnn0zxydfs8rls2eydfrqmaweh2emt4gsmx3u`;
+// v2
+export const MainRPSContractAddress = `terra19hfed92vghhacrlnrxcx6fzwmrqcd4hp4kgr7t`;
 
 export const getContractAddress = (networkName: string) =>
   networkName === `mainnet` ? MainRPSContractAddress : TestRPSContractAddress;

@@ -1,4 +1,5 @@
 import { getLCDCClientConfig, mobileMaxWidth } from '@/constants';
+import { WalletContext } from '@/contexts/Wallet';
 import { formatAddressShort } from '@/utils/addressHelpers';
 import { LCDClient } from '@terra-money/terra.js';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
@@ -285,11 +286,12 @@ const VerticalNav: FC<React.ReactNode> = ({ children }) => {
         }}
       >
         {connectedWallet ? (
-          <MaintenanceMessage />
+          // <MaintenanceMessage />
+
+          <WalletContext.Provider value={connectedWallet}>
+            {children}
+          </WalletContext.Provider>
         ) : (
-          // <WalletContext.Provider value={connectedWallet}>
-          //   {children}
-          // </WalletContext.Provider>
           <>
             <p className="text-3xl dark:text-white">Wallet not connected.</p>
 
